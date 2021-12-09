@@ -9,9 +9,9 @@ def projects():
     projects = ["project1", "project2", "project3"]
     return render("projects-template.html", projects=projects)
 
-@server.route("/<project>")
+@server.route("/projects/<project>")
 def project(project):
-    tasks = ["task1", "task2", "task3"]
+    tasks = {"low":[{"disp-value":"task1"}, {"disp-value":"task2"}, {"disp-value":"task3"}], "med":[], "high":[], "top-e":False, "top":{}}
     return render("manager-template.html", project_name=project, project=tasks)
 
 server.run(host="127.0.0.1", port="3000", debug=True)

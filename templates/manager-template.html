@@ -1,10 +1,52 @@
 <html>
-  <body>
-    <h1>{{ project_name }}</h1>
-    <ol>
-    {% for task in project %}
-    <li>{{ task }}</li>
-    {% endfor %}
-    </ol>
-  </body>
+	<head>
+		<style>
+			/* project name */
+			h1#proj-name {
+				/**/
+			}
+			/* highest priority task*/
+			h2#pri-top {
+				/**/
+			}
+			/* high priority tasks */
+			ul#pri-high {
+				/**/
+			}
+			/* medium priority tasks */
+			ul#pri-med {
+				/**/
+			}
+			/* low priority tasks */
+			ul#pri-low {
+				/**/
+			}
+		</style>
+	</head>
+	<body>
+		<h1 id="proj-name">{{ project_name }}</h1>
+		{% if project["top-e"] %}
+		<h2 id="pri-top">{{ project["top"] }}</h2>
+		{% endif %}
+		<ul id="pri-high">
+			{% for task in project["high"] %}
+			<li>{{ task["disp-value"] }} <input type="button" value="manage" onclick="showmanage({{ task }})"></li>
+			{% endfor %}
+		</ul>
+		<ul id="pri-med">
+			{% for task in project["med"] %}
+			<li>{{ task["disp-value"] }} <input type="button" value="manage" onclick="showmanage({{ task }})"></li>
+			{% endfor %}
+		</ul>
+		<ul id="pri-low">
+			{% for task in project["low"] %}
+			<li>{{ task["disp-value"] }} <input type="button" value="manage" onclick="showmanage({{ task }})"></li>
+			{% endfor %}
+		</ul>
+		<script>
+			function showmanage (task) {
+				console.log(task, typeof task);
+			}
+		</script>
+	</body>
 </html>
