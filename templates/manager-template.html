@@ -1,13 +1,46 @@
 <html>
 	<head>
 		<style>
+			#indent {
+				text-indent : 10;
+			}
 			/* project name */
 			h1#proj-name {
-				/**/
+				text-indent : 0;
+			}
+			h1#proj-name:hover {
+				cursor : default;
+			}
+			/* manage task buttons */
+			.taskmanage {
+				background : #444;
+				color : white;
+				border-color : #666;
+				transition : background-color linear 0.25s, border-color linear 0.25s;
+			}
+			.task:hover > .taskmanage, .taskmanage:hover {
+				background : #666;
+				border-color : #888;
+				cursor : hand;
+			}
+			/* tasks */
+			.task {
+				/* for debugging */
+				/* border : solid lime; */
+				width : fit-content;
+				color : black;
+				transition : color linear 0.25s;
+			}
+			.task:hover {
+				color : gray;
+				cursor : hand;
 			}
 			/* priority cat styling*/
 			h2.pri-label {
 				/**/
+			}
+			h2.pri-label:hover {
+				cursor : default;
 			}
 			/* highest priority task*/
 			h3#pri-top {
@@ -25,39 +58,77 @@
 			ul#pri-low {
 				/**/
 			}
+			/* task manager dialog */
+			dialog#manage-task::backdrop {
+				background : #44444488;
+			}
+			dialog#manage-task {
+				border : solid gray;
+				background : #555;
+			}
 		</style>
 	</head>
 	<body>
 		<h1 id="proj-name">{{ project_name }}</h1>
-		<h2 class="pri-label">Top Priority</h2>
-		<ul><li>
-		{% if project["top-e"] %}
-		<h3 id="pri-top">{{ project["top"]["disp-value"] }} <input type="button" value="manage" onclick="showmanage({{ project['top'] }})"></h3>
-		{% else %}
-		<h3 id="pri-top">no top priority</h3>
-		{% endif %}
-		</li></ul>
-		<h2 class="pri-label">High Priority</h2>
-		<ul id="pri-high">
-			{% for task in project["high"] %}
-			<li>{{ task["disp-value"] }} <input type="button" value="manage" onclick="showmanage({{ task }})"></li>
-			{% endfor %}
-		</ul>
-		<h2 class="pri-label">Medium Priority</h2>
-		<ul id="pri-med">
-			{% for task in project["med"] %}
-			<li>{{ task["disp-value"] }} <input type="button" value="manage" onclick="showmanage({{ task }})"></li>
-			{% endfor %}
-		</ul>
-		<h2 class="pri-label">Low Priority</h2>
-		<ul id="pri-low">
-			{% for task in project["low"] %}
-			<li>{{ task["disp-value"] }} <input type="button" value="manage" onclick="showmanage({{ task }})"></li>
-			{% endfor %}
-		</ul>
+		<div id="indent">
+			<h2 class="pri-label">Top Priority</h2>
+			<ul><li>
+			{% if project["top-e"] %}
+			<h3 id="pri-top" class="task" onclick="showmanage({{ project['top'] }})">{{ project["top"]["disp-value"] }}</h3>
+			{% else %}
+			<h3 id="pri-top">no top priority</h3>
+			{% endif %}
+			</li></ul>
+			<h2 class="pri-label">High Priority</h2>
+			<ul id="pri-high">
+				{% for task in project["high"] %}
+				<li class="task" onclick="showmanage({{ task }})">{{ task["disp-value"] }}</li>
+				{% endfor %}
+			</ul>
+			<h2 class="pri-label">Medium Priority</h2>
+			<ul id="pri-med">
+				{% for task in project["med"] %}
+				<li class="task" onclick="showmanage({{ task }})">{{ task["disp-value"] }}</li>
+				{% endfor %}
+			</ul>
+			<h2 class="pri-label">Low Priority</h2>
+			<ul id="pri-low">
+				{% for task in project["low"] %}
+				<li class="task" onclick="showmanage({{ task }})">{{ task["disp-value"] }}</li>
+				{% endfor %}
+			</ul>
+		</div>
+		<!--  <input type="button" class="taskmanage" value="manage" onclick="showmanage({{ task }})"> -->
+		<dialog id="manage-task">
+			<h3 id="mtk-name"></h3>
+			<h4>Labels</h4>
+			<ul id="mtk-labels"></ul>
+			<input type="button" value="apply" onclick="applysettings()">
+			<br><br>
+			<input type="button" value="cancel" onclick="document.getElementById('manage-task').close()">
+		</dialog>
 		<script>
+			const mt = document.getElementById("manage-task");
+			const tn = document.getElementById("mtk-name");
+			const tl = document.getElementById("mtk-labels");
+			let current_task = null;
 			function showmanage (task) {
 				console.log(task, typeof task);
+				current_task = task;
+				tn.textContent = task["disp-value"];
+				tl.replaceChildren();
+				for (let i = 0; i < task.labels.length; i ++) {
+					const li = document.createElement("li");
+					li.textContent = task.labels[i];
+					tl.appendChild(li);
+				}
+				mt.showModal();
+			}
+			function applysettings () {
+				document.getElementById("manage-task").close();
+				if (current_task === null) {
+					return;
+				}
 			}
 		</script>
 	</body>

@@ -1,9 +1,27 @@
 <html>
+	<head>
+		<style>
+			/* link styles */
+			a:any-link {
+				color : #5384dc;
+				transition : color linear 0.25s;
+			}
+			a:any-link:hover {
+				color : #2162ba;
+			}
+		</style>
+	</head>
 	<body>
 		<ul>
 			{% for project in projects %}
 			<li><a href="/projects/{{project}}">{{ project }}</a></li>
 			{% endfor %}
 		</ul>
+		<script>
+			if (window.location.pathname != "/") {
+				console.log(window.location.pathname);
+				window.location.pathname = "";
+			}
+		</script>
 	</body>
 </html>

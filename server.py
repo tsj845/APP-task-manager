@@ -4,18 +4,17 @@ from flask import render_template as render
 server = Flask(__name__)
 server.config["TEMPLATES_AUTO_RELOAD"] = True
 
-@server.route("/")
+@server.endpoint("index")
 def projects ():
 	projects = ["project1", "project2", "project3"]
 	return render("projects-template.html", projects=projects)
 
-@server.route("/projects")
-def project ():
-	return server.redirect("/")
+server.add_url_rule("/", endpoint="index")
+server.add_url_rule("/projects", endpoint="index")
 
 @server.route("/projects/<project>")
 def project (project):
-	tasks = {"low":[{"disp-value":"task1"}, {"disp-value":"task2"}, {"disp-value":"task3"}], "med":[{"disp-value":"task4"}], "high":[{"disp-value":"task5"}], "top-e":True, "top":{"disp-value":"task6"}}
+	tasks = {"low":[{"disp-value":"task1", "labels":[]}, {"disp-value":"task2", "labels":[]}, {"disp-value":"task3", "labels":[]}], "med":[{"disp-value":"task4", "labels":[]}], "high":[{"disp-value":"task5", "labels":[]}], "top-e":True, "top":{"disp-value":"task6", "labels":["top"]}}
 	return render("manager-template.html", project_name=project, project=tasks)
 
 server.run(host="127.0.0.1", port="3000", debug=True)
