@@ -30,11 +30,13 @@
 	<body>
 		<h1 id="proj-name">{{ project_name }}</h1>
 		<h2 class="pri-label">Top Priority</h2>
+		<ul><li>
 		{% if project["top-e"] %}
 		<h3 id="pri-top">{{ project["top"]["disp-value"] }} <input type="button" value="manage" onclick="showmanage({{ project['top'] }})"></h3>
 		{% else %}
 		<h3 id="pri-top">no top priority</h3>
 		{% endif %}
+		</li></ul>
 		<h2 class="pri-label">High Priority</h2>
 		<ul id="pri-high">
 			{% for task in project["high"] %}
