@@ -5,8 +5,12 @@
 			h1#proj-name {
 				/**/
 			}
+			/* priority cat styling*/
+			h2.pri-label {
+				/**/
+			}
 			/* highest priority task*/
-			h2#pri-top {
+			h3#pri-top {
 				/**/
 			}
 			/* high priority tasks */
@@ -25,19 +29,25 @@
 	</head>
 	<body>
 		<h1 id="proj-name">{{ project_name }}</h1>
+		<h2 class="pri-label">Top Priority</h2>
 		{% if project["top-e"] %}
-		<h2 id="pri-top">{{ project["top"] }}</h2>
+		<h3 id="pri-top">{{ project["top"]["disp-value"] }} <input type="button" value="manage" onclick="showmanage({{ project['top'] }})"></h3>
+		{% else %}
+		<h3 id="pri-top">no top priority</h3>
 		{% endif %}
+		<h2 class="pri-label">High Priority</h2>
 		<ul id="pri-high">
 			{% for task in project["high"] %}
 			<li>{{ task["disp-value"] }} <input type="button" value="manage" onclick="showmanage({{ task }})"></li>
 			{% endfor %}
 		</ul>
+		<h2 class="pri-label">Medium Priority</h2>
 		<ul id="pri-med">
 			{% for task in project["med"] %}
 			<li>{{ task["disp-value"] }} <input type="button" value="manage" onclick="showmanage({{ task }})"></li>
 			{% endfor %}
 		</ul>
+		<h2 class="pri-label">Low Priority</h2>
 		<ul id="pri-low">
 			{% for task in project["low"] %}
 			<li>{{ task["disp-value"] }} <input type="button" value="manage" onclick="showmanage({{ task }})"></li>

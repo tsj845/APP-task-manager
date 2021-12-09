@@ -11,7 +11,7 @@ def projects():
 
 @server.route("/projects/<project>")
 def project(project):
-    tasks = {"low":[{"disp-value":"task1"}, {"disp-value":"task2"}, {"disp-value":"task3"}], "med":[], "high":[], "top-e":False, "top":{}}
+    tasks = {"low":[{"disp-value":"task1"}, {"disp-value":"task2"}, {"disp-value":"task3"}], "med":[{"disp-value":"task4"}], "high":[{"disp-value":"task5"}], "top-e":True, "top":{"disp-value":"task6"}}
     return render("manager-template.html", project_name=project, project=tasks)
 
 server.run(host="127.0.0.1", port="3000", debug=True)
