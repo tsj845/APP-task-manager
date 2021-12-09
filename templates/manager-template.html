@@ -1,12 +1,21 @@
 <html>
 	<head>
 		<style>
-			#indent {
-				text-indent : 10;
+		        * {
+			        margin: 0px;
+			}
+			body {
+			        background-color: #eee;
+			}
+		        #indent {
+			        text-indent : 10;
 			}
 			/* project name */
 			h1#proj-name {
-				text-indent : 0;
+			        text-indent: 0;
+				font-size: 45px;
+				padding: 5px;
+				background-color: #ccc
 			}
 			h1#proj-name:hover {
 				cursor : default;
@@ -82,19 +91,19 @@
 			<h2 class="pri-label">High Priority</h2>
 			<ul id="pri-high">
 				{% for task in project["high"] %}
-				<li class="task" onclick="showmanage({{ task }})">{{ task_html(task) | safe }}</li>
+				<li onclick="showmanage({{ task }})">{{ task_html(task) | safe }}</li>
 				{% endfor %}
 			</ul>
 			<h2 class="pri-label">Medium Priority</h2>
 			<ul id="pri-med">
 				{% for task in project["med"] %}
-				<li class="task" onclick="showmanage({{ task }})">{{ task_html(task) | safe }}</li>
+				<li onclick="showmanage({{ task }})">{{ task_html(task) | safe }}</li>
 				{% endfor %}
 			</ul>
 			<h2 class="pri-label">Low Priority</h2>
 			<ul id="pri-low">
 				{% for task in project["low"] %}
-				<li class="task" onclick="showmanage({{ task }})">{{ task_html(task) | safe }}</li>
+				<li onclick="showmanage({{ task }})">{{ task_html(task) | safe }}</li>
 				{% endfor %}
 			</ul>
 		</div>

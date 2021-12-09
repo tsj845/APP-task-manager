@@ -16,13 +16,13 @@ server.add_url_rule("/projects", endpoint="index")
 def useful_functions():
         def task_html(task):
                 if "subtasks" in task:
-                        html = task["disp-value"] + "<ul>"
+                        html = "<p class=\'task\'>" + task["disp-value"] + "</p>" + "<ul>"
                         for subtask in task["subtasks"]:
                                 html += "<li>" + task_html(subtask) + "</li>"
                         html += "</ul>"
                         return html
                 else:
-                        return task["disp-value"]
+                        return "<p class=\'task\'>" + task["disp-value"] + "</p>"
         return dict(task_html=task_html)
         
 @server.route("/projects/<project>")
