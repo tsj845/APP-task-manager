@@ -80,29 +80,9 @@
 	<body>
 		<h1 id="proj-name">{{ project_name }}</h1>
 		<div id="indent">
-			<h2 class="pri-label">Top Priority</h2>
-			<ul><li>
-			{% if project["top-e"] %}
-			<h3 id="pri-top" class="task" onclick="showmanage({{ project['top'] }})">{{ project["top"]["disp-value"] }}</h3>
-			{% else %}
-			<h3 id="pri-top">no top priority</h3>
-			{% endif %}
 			</li></ul>
-			<h2 class="pri-label">High Priority</h2>
-			<ul id="pri-high">
-				{% for task in project["high"] %}
-				<li onclick="showmanage({{ task }})">{{ task_html(task) | safe }}</li>
-				{% endfor %}
-			</ul>
-			<h2 class="pri-label">Medium Priority</h2>
-			<ul id="pri-med">
-				{% for task in project["med"] %}
-				<li onclick="showmanage({{ task }})">{{ task_html(task) | safe }}</li>
-				{% endfor %}
-			</ul>
-			<h2 class="pri-label">Low Priority</h2>
-			<ul id="pri-low">
-				{% for task in project["low"] %}
+			<ul id="tasks">
+				{% for task in project %}
 				<li onclick="showmanage({{ task }})">{{ task_html(task) | safe }}</li>
 				{% endfor %}
 			</ul>
