@@ -122,3 +122,7 @@ socket.on("add-failed", (data) => {
 socket.on("add-success", () => {
     handleupdate();
 });
+
+socket.on("join-fail", () => {
+    window.location.pathname = "/err/0";
+});
