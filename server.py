@@ -2,7 +2,7 @@ from flask import Flask
 from flask import render_template as render
 from flask_socketio import SocketIO, send, emit
 
-server = Flask(__name__)
+server = Flask(__name__, static_folder="assets")
 server.config["TEMPLATES_AUTO_RELOAD"] = True
 socketio = SocketIO(server)
 
@@ -110,4 +110,4 @@ def remtask (data):
 	emit("remove-success", {"index":ind, "priority":priority})
 
 # server
-socketio.run(server, host="127.0.0.1", port="3000", debug=True)
+socketio.run(server, host="127.0.0.1", port="3000", debug=(True if input("use debug mode? [y/N]") == "y" else False))

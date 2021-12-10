@@ -130,99 +130,20 @@
 			<br><br>
 			<input type="button" value="cancel" onclick="document.getElementById('manage-name').close()">
 		</dialog>
+		<dialog id="new-task-dialog">
+			<span>task name: </span>
+			<input type="text" id="ntd-disp-value">
+			<br><br>
+			<input type="number" id="ntd-priority" min="0" max="2" value="1">
+			<br><br>
+			<span>coming soon</span>
+			<br><br>
+			<input type="button" value="add" onclick="addtask()">
+			<br><br>
+			<input type="button" value="cancel" onclick="document.getElementById('new-task-dialog').close()">
+		</dialog>
+		<input type="button" value="new task" onclick="newtask()">
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
-		<script>
-			let socket = io();
-			let successid = -1;
-			let updat = {};
-			const pname = document.getElementById("proj-name");
-			let origin = pname.textContent;
-			const mtn = document.getElementById("manage-name");
-			const nc = document.getElementById("mtn-name");
-			const mt = document.getElementById("manage-task");
-			const tn = document.getElementById("mtk-name");
-			const tl = document.getElementById("mtk-labels");
-			const topp = document.getElementById("pri-top");
-			let current_task = null;
-			function handleupdate () {
-				switch (successid) {
-					case -1:
-						break;
-					case 0:
-						origin = updat.name;
-						pname.textContent = origin;
-						window.location.pathname = "/projects/"+origin;
-						break;
-					case 1:
-						console.log("remove success");
-						if (updat.priority === "top") {
-							topp.className = "";
-							topp.setAttribute("onclick", "");
-							topp.textContent = "no top priority";
-						} else {
-							document.getElementById("pri-"+updat.priority).removeChild(document.getElementById("pri-"+updat.priority).children[updat.index]);
-						}
-						break;
-					default:
-						break;
-				}
-			}
-			function showmanage (task) {
-				console.log(task, typeof task);
-				current_task = task;
-				tn.textContent = task["disp-value"];
-				tl.replaceChildren();
-				for (let i = 0; i < task.labels.length; i ++) {
-					const li = document.createElement("li");
-					li.textContent = task.labels[i];
-					tl.appendChild(li);
-				}
-				mt.showModal();
-			}
-			function removetask () {
-				mt.close();
-				if (current_task === null) {
-					return;
-				}
-				successid = 1;
-				socket.emit("remove-task", {"origin":origin, "task-priority":current_task.priority, "task-value":current_task["disp-value"]});
-			}
-			function applysettings () {
-				mt.close();
-				if (current_task === null) {
-					return;
-				}
-			}
-			function managename () {
-				nc.value = pname.textContent;
-				mtn.showModal();
-			}
-			function applyname () {
-				const name = nc.value;
-				// pname.textContent = name;
-				mtn.close();
-				successid = 0;
-				updat = {name:name};
-				socket.emit("update", {"update-target":"name", "origin":origin, "update-value":name});
-			}
-			socket.on("connect", () => {
-				console.log("connect");
-				socket.emit("connection", {data:"connection active"});
-			});
-			socket.on("update-success", () => {
-				console.log("success");
-				handleupdate();
-			});
-			socket.on("update-failed", (data) => {
-				console.log(data.reason);
-			});
-			socket.on("remove-failed", (data) => {
-				console.log(data.reason);
-			});
-			socket.on("remove-success", (data) => {
-				updat = data;
-				handleupdate();
-			});
-		</script>
+		<script src="{{ url_for('static', filename='js/manager.js') }}"></script>
 	</body>
 </html>
