@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import render_template as render
 from flask_socketio import SocketIO, send, emit
+from werkzeug.exceptions import abort
 
 server = Flask(__name__, static_folder="assets")
 server.config["TEMPLATES_AUTO_RELOAD"] = True
@@ -36,7 +37,15 @@ def useful_functions():
 
 @server.route("/projects/<project>")
 def projectf (project):
+	if (project not in projects.keys()):
+		abort(404)
 	return render("manager-template.html", project_name=project, project=projects[project])
+
+@server.errorhandler(404)
+def handle_bad_request (e):
+	return render("errors/400.html"), 404
+
+# server.register_error_handler(404, handle_bad_request)
 
 @socketio.on("connection")
 def hand_connect (data):
@@ -146,4 +155,4 @@ def addtask (data):
 	emit("add-success")
 
 # server
-socketio.run(server, host="127.0.0.1", port="3000", debug=(True if input("use debug mode? [y/N]") == "y" else False))
+socketio.run(server, host="127.0.0.1", port="3000", debug=True)
