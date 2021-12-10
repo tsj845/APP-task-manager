@@ -1,24 +1,29 @@
 <html>
 	<head>
 		<style>
-		        * {
-			        margin: 0px;
+		    .task, .pri-label, #indent > ul {
+			    margin : 0px;
 			}
 			body {
-			        background-color: #eee;
+			    /* background-color: #eee; */
 			}
-		        #indent {
-			        text-indent : 10;
+			#indent {
+				text-indent : 20;
+			}
+			#indent > * > * {
+				text-indent : 0;
 			}
 			/* project name */
 			h1#proj-name {
-			        text-indent: 0;
-				font-size: 45px;
-				padding: 5px;
-				background-color: #ccc
+				/* possible */
+				/* user-select : none; */
+				color : black;
+				transition : color linear 0.25s;
 			}
 			h1#proj-name:hover {
-				cursor : default;
+				cursor : hand;
+				/* cursor : default; */
+				color : #444;
 			}
 			/* manage task buttons */
 			.taskmanage {
@@ -78,7 +83,7 @@
 		</style>
 	</head>
 	<body>
-		<h1 id="proj-name">{{ project_name }}</h1>
+		<h1 id="proj-name" onclick="managename()">{{ project_name }}</h1>
 		<div id="indent">
 			<h2 class="pri-label">Top Priority</h2>
 			<ul><li>
@@ -114,13 +119,54 @@
 			<ul id="mtk-labels"></ul>
 			<input type="button" value="apply" onclick="applysettings()">
 			<br><br>
+			<input type="button" value="remove" onclick="removetask()">
+			<br><br>
 			<input type="button" value="cancel" onclick="document.getElementById('manage-task').close()">
 		</dialog>
+		<dialog id="manage-name">
+			<input type="text" id="mtn-name">
+			<br><br>
+			<input type="button" value="apply" onclick="applyname()">
+			<br><br>
+			<input type="button" value="cancel" onclick="document.getElementById('manage-name').close()">
+		</dialog>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
 		<script>
+			let socket = io();
+			let successid = -1;
+			let updat = {};
+			const pname = document.getElementById("proj-name");
+			let origin = pname.textContent;
+			const mtn = document.getElementById("manage-name");
+			const nc = document.getElementById("mtn-name");
 			const mt = document.getElementById("manage-task");
 			const tn = document.getElementById("mtk-name");
 			const tl = document.getElementById("mtk-labels");
+			const topp = document.getElementById("pri-top");
 			let current_task = null;
+			function handleupdate () {
+				switch (successid) {
+					case -1:
+						break;
+					case 0:
+						origin = updat.name;
+						pname.textContent = origin;
+						window.location.pathname = "/projects/"+origin;
+						break;
+					case 1:
+						console.log("remove success");
+						if (updat.priority === "top") {
+							topp.className = "";
+							topp.setAttribute("onclick", "");
+							topp.textContent = "no top priority";
+						} else {
+							document.getElementById("pri-"+updat.priority).removeChild(document.getElementById("pri-"+updat.priority).children[updat.index]);
+						}
+						break;
+					default:
+						break;
+				}
+			}
 			function showmanage (task) {
 				console.log(task, typeof task);
 				current_task = task;
@@ -133,12 +179,50 @@
 				}
 				mt.showModal();
 			}
+			function removetask () {
+				mt.close();
+				if (current_task === null) {
+					return;
+				}
+				successid = 1;
+				socket.emit("remove-task", {"origin":origin, "task-priority":current_task.priority, "task-value":current_task["disp-value"]});
+			}
 			function applysettings () {
-				document.getElementById("manage-task").close();
+				mt.close();
 				if (current_task === null) {
 					return;
 				}
 			}
+			function managename () {
+				nc.value = pname.textContent;
+				mtn.showModal();
+			}
+			function applyname () {
+				const name = nc.value;
+				// pname.textContent = name;
+				mtn.close();
+				successid = 0;
+				updat = {name:name};
+				socket.emit("update", {"update-target":"name", "origin":origin, "update-value":name});
+			}
+			socket.on("connect", () => {
+				console.log("connect");
+				socket.emit("connection", {data:"connection active"});
+			});
+			socket.on("update-success", () => {
+				console.log("success");
+				handleupdate();
+			});
+			socket.on("update-failed", (data) => {
+				console.log(data.reason);
+			});
+			socket.on("remove-failed", (data) => {
+				console.log(data.reason);
+			});
+			socket.on("remove-success", (data) => {
+				updat = data;
+				handleupdate();
+			});
 		</script>
 	</body>
 </html>
