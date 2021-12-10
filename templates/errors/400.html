@@ -1,8 +1,26 @@
 <!DOCTYPE html>
 <html>
-    <head></head>
+    <head>
+        <style>
+            body {
+                margin : 0px;
+                background : #222;
+                overflow : hidden;
+            }
+            div {
+                height : 100vh;
+                display : flex;
+                flex-direction : row;
+                align-items : center;
+            }
+            img {
+                width : 100vw;
+            }
+        </style>
+    </head>
     <body>
-        <h1>Error 404, this is not the page you're looking for</h1>
-        <img src="{{ url_for('static', filename='images/code.png')}}" height="3in">
+        <div>
+            <img src="{{ url_for('static', filename='images/err404.png') }}">
+        </div>
     </body>
 </html>
