@@ -109,5 +109,39 @@ def remtask (data):
 	projects[origin][priority] = tasklst
 	emit("remove-success", {"index":ind, "priority":priority})
 
+def _val_addat (data):
+	keys = data.keys()
+	if ("origin" not in keys):
+		return True
+	if ("task-priority" not in keys):
+		return True
+	if ("task-value" not in keys):
+		return True
+	return False
+
+@socketio.on("new-task")
+def addtask (data):
+	if (_val_addat(data)):
+		emit("add-failed", {"reason":"invalid data"})
+		return
+	origin = data["origin"]
+	name = data["task-value"]
+	priority = data["task-priority"]
+	if (origin not in projects.keys()):
+		emit("add-failed", {"reason":"invalid project name"})
+		return
+	if (priority not in "012"):
+		emit("add-failed", {"reason":"invalid priority"})
+		return
+	priority = {"0":"low", "1":"med", "2":"high"}[priority]
+	l = projects[origin][priority]
+	if (name in l):
+		emit("add-failed", {"reason":"task already exists"})
+		return
+	task = mkTask(name, priority)
+	l.append(task)
+	projects[origin][priority] = l
+	emit("add-success")
+
 # server
 socketio.run(server, host="127.0.0.1", port="3000", debug=(True if input("use debug mode? [y/N]") == "y" else False))

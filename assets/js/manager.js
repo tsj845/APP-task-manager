@@ -16,6 +16,7 @@ let current_task = null;
 function mkTask (data) {
     const l = document.createElement("li");
     const task = {"disp-value":data.name,priority:data.priority,"labels":[],"subtasks":[]};
+    l.textContent = data.name;
     l.className = "task";
     l.setAttribute("onclick", "showmanage("+task+")");
     return l;
@@ -94,7 +95,7 @@ function addtask () {
     const name = ntdname.value;
     const priority = ntdprio.value;
     successid = 2;
-    updat = {name:name, priority:priority};
+    updat = {name:name, priority:{"0":"low","1":"med","2":"high"}[priority]};
     socket.emit("new-task", {"origin":origin, "task-value":name, "task-priority":priority});
 }
 socket.on("connect", () => {
