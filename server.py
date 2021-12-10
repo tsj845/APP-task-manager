@@ -23,13 +23,13 @@ server.add_url_rule("/projects", endpoint="index")
 def useful_functions():
 	def task_html(task):
 		if "subtasks" in task:
-			html = "<p class=\'task\'>" + task["disp-value"] + "</p>" + "<ul>"
+			html = "<div class=\'task-wrapper\'><p class=\'task\' onclick=\"if (this.nextElementSibling.style.display==\'none\'){this.nextElementSibling.style.display=\'block\'}else{this.nextElementSibling.style.display=\'none\'}\">" + task["disp-value"] + "</p>" + "<div class=\"task-controls\" style=\"display:none;\"><img src=\"/assets/icons/plus.svg\"><img src=\"/assets/icons/rename.svg\"></div></div>" + "<ul>"
 			for subtask in task["subtasks"]:
 				html += "<li>" + task_html(subtask) + "</li>"
 			html += "</ul>"
 			return html
 		else:
-			return "<p class=\'task\'>" + task["disp-value"] + "</p>"
+			return "<div class=\'task-wrapper\'><p class=\'task\' onclick=\"if (this.nextElementSibling.style.display==\'none\'){this.nextElementSibling.style.display=\'block\'}else{this.nextElementSibling.style.display=\'none\'}\">" + task["disp-value"] + "</p>" + "<div class=\"task-controls\" style=\"display:none;\"><img src=\"/assets/icons/plus.svg\"><img src=\"/assets/icons/rename.svg\"></div></div>"
 	return dict(task_html=task_html)
         
 @server.route("/projects/<project>")
