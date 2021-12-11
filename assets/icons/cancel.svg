@@ -7,7 +7,7 @@
    viewBox="0 0 32.0 32.0"
    version="1.1"
    id="SVGRoot"
-   sodipodi:docname="plus.svg"
+   sodipodi:docname="cancel.svg"
    inkscape:version="1.1.1 (c3084ef, 2021-09-22)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -52,11 +52,11 @@
        ry="4" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 16,29 V 4"
-       id="path1045" />
+       d="M 4,4 28,28"
+       id="path1466" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 4,16 H 28"
-       id="path1047" />
+       d="M 4,28 28,4"
+       id="path1468" />
   </g>
 </svg>
