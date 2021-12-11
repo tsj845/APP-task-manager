@@ -22,6 +22,7 @@ server.add_url_rule("/projects", endpoint="index")
 @server.context_processor
 def useful_functions():
 	def task_html(task):
+                # sorry about messyness
 		basic_html = "<div class=\'task-wrapper\'><p class=\'task\' onclick=\"if (this.nextElementSibling.style.display==\'none\'){this.nextElementSibling.style.display=\'block\'}else{this.nextElementSibling.style.display=\'none\'}\">" + task["disp-value"] + "</p><div class=\"task-controls\" style=\"display:none;\"><div class=\'task-controls-plus\'><img src=\"/assets/icons/plus.svg\" onclick=\"this.nextElementSibling.style.display=\'block\';this.style.display=\'none\'\"><div class=\'task-controls-input\' style=\'display:none;\'><img src=\'/assets/icons/cancel.svg\' onclick=\"this.parentElement.previousElementSibling.style.display=\'block\';this.parentElement.style.display=\'none\'\"><input type=\'text\' placeholder=\'Add subtask\'></div></div><div class=\'task-controls-rename\'><img src=\"/assets/icons/rename.svg\" onclick=\"this.nextElementSibling.style.display=\'block\';this.style.display=\'none\'\"><div class=\'task-controls-input\' style=\'display:none;\'><img src=\'/assets/icons/cancel.svg\' onclick=\"this.parentElement.previousElementSibling.style.display=\'block\';this.parentElement.style.display=\'none\'\"><input type=\'text\' placeholder=\'Rename task\'></div></div></div></div>"
 		if "subtasks" in task:
 			html = basic_html + "<ul>"
