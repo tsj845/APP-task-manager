@@ -49,7 +49,7 @@ function applyname (name) {
 function addtask (task_name, priority) {
     successid = 2;
     updat = {name:task_name, priority:{"0":"low","1":"med","2":"high"}[priority]};
-    socket.emit("new-task", {"origin":origin, "task-value":name, "task-priority":priority});
+    socket.emit("new-task", {"origin":origin, "task-value":task_name, "task-priority":priority});
 }
 socket.on("connect", () => {
     console.log("connect");
