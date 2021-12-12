@@ -3,22 +3,11 @@ let successid = -1;
 let updat = {};
 const pname = document.getElementById("proj-name");
 let origin = pname.textContent;
-const mtn = document.getElementById("manage-name");
-const nc = document.getElementById("mtn-name");
-const mt = document.getElementById("manage-task");
-const tn = document.getElementById("mtk-name");
-const tl = document.getElementById("mtk-labels");
 const topp = document.getElementById("pri-top");
-const ntd = document.getElementById("new-task-dialog");
-const ntdname = document.getElementById("ntd-disp-value");
-const ntdprio = document.getElementById("ntd-priority");
-let current_task = null;
 function mkTask (data) {
     const l = document.createElement("li");
     const task = {"disp-value":data.name,priority:data.priority,"labels":[],"subtasks":[]};
-    l.textContent = data.name;
-    l.className = "task";
-    l.setAttribute("onclick", "showmanage("+task+")");
+    l.innerHTML = "<div class='task-wrapper'><p class='task' onclick=\"if (this.nextElementSibling.style.display=='none'){this.nextElementSibling.style.display='block'}else{this.nextElementSibling.style.display='none'}\">" + task["disp-value"] + "</p><div class='task-controls' style='display:none;'><div class='task-controls-plus'><img src='/assets/icons/plus.svg' onclick=\"this.nextElementSibling.style.display='block';this.style.display='none'\"><div class='task-controls-input' style='display:none;'><img src='/assets/icons/cancel.svg' onclick=\"this.parentElement.previousElementSibling.style.display='block';this.parentElement.style.display='none'\"><input type='text' placeholder='Add subtask'></div></div><div class='task-controls-rename'><img src='/assets/icons/rename.svg' onclick=\"this.nextElementSibling.style.display='block';this.style.display='none'\"><div class='task-controls-input' style='display:none;'><img src='/assets/icons/cancel.svg' onclick=\"this.parentElement.previousElementSibling.style.display='block';this.parentElement.style.display='none'\"><input type='text' placeholder='Rename task'></div></div><img src='/assets/icons/checkmark.svg' class='task-controls-checkmark'></div></div>"
     return l;
 }
 function handleupdate () {
@@ -47,55 +36,19 @@ function handleupdate () {
             break;
     }
 }
-function showmanage (task) {
-    console.log(task, typeof task);
-    current_task = task;
-    tn.textContent = task["disp-value"];
-    tl.replaceChildren();
-    for (let i = 0; i < task.labels.length; i ++) {
-        const li = document.createElement("li");
-        li.textContent = task.labels[i];
-        tl.appendChild(li);
-    }
-    mt.showModal();
-}
-function removetask () {
-    mt.close();
-    if (current_task === null) {
-        return;
-    }
+function removetask (task_name, priority) {
     successid = 1;
-    socket.emit("remove-task", {"origin":origin, "task-priority":current_task.priority, "task-value":current_task["disp-value"]});
+    socket.emit("remove-task", {"origin":origin, "task-priority":priority, "task-value":task_name});
 }
-function applysettings () {
-    mt.close();
-    if (current_task === null) {
-        return;
-    }
-}
-function managename () {
-    nc.value = pname.textContent;
-    mtn.showModal();
-}
-function applyname () {
-    const name = nc.value;
-    // pname.textContent = name;
-    mtn.close();
+function applyname (name) {
+    pname.textContent = name;
     successid = 0;
     updat = {name:name};
     socket.emit("update", {"update-target":"name", "origin":origin, "update-value":name});
 }
-function newtask () {
-    ntdname.value = "";
-    ntdprio.value = "1";
-    ntd.showModal();
-}
-function addtask () {
-    ntd.close();
-    const name = ntdname.value;
-    const priority = ntdprio.value;
+function addtask (task_name, priority) {
     successid = 2;
-    updat = {name:name, priority:{"0":"low","1":"med","2":"high"}[priority]};
+    updat = {name:task_name, priority:{"0":"low","1":"med","2":"high"}[priority]};
     socket.emit("new-task", {"origin":origin, "task-value":name, "task-priority":priority});
 }
 socket.on("connect", () => {
