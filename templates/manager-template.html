@@ -7,42 +7,7 @@
 		<img src="/assets/cursors/edit.svg">
 		<img src="/assets/icons/delete.svg">
 		<h1 id="proj-name" onclick="managename()">{{ project_name }}</h1>
-		<div id="task-list">
-		</div>
-		<dialog id="manage-task">
-			<h3 id="mtk-name"></h3>
-			<h4>Labels</h4>
-			<ul id="mtk-labels"></ul>
-			<input type="button" value="apply" onclick="applysettings()">
-			<br><br>
-			<input type="button" value="remove" onclick="removetask()">
-			<br><br>
-			<input type="button" value="cancel" onclick="document.getElementById('manage-task').close()">
-		</dialog>
-		<dialog id="manage-name">
-			<input type="text" id="mtn-name" autocomplete="off">
-			<br><br>
-			<input type="button" value="apply" onclick="applyname()">
-			<br><br>
-			<input type="button" value="cancel" onclick="document.getElementById('manage-name').close()">
-		</dialog>
-		<dialog id="new-task-dialog">
-			<span>task name: </span>
-			<input type="text" id="ntd-disp-value" autocomplete="off">
-			<br><br>
-			<input type="number" id="ntd-priority" min="0" max="2" value="1">
-			<br><br>
-			<span>coming soon</span>
-			<br><br>
-			<input type="button" value="add" onclick="addtask()">
-			<br><br>
-			<input type="button" value="cancel" onclick="document.getElementById('new-task-dialog').close()">
-		</dialog>
-		<div id="menu" class="hidden">
-			<input type="button" value="rename project" onclick="managename()"><br>
-			<input type="button" value="new task" onclick="newtask()">
-		</div>
-		<!-- <input type="button" value="new task" onclick="newtask()"> -->
+		<div id="task-list"></div>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
 		<script src="/assets/js/manager.js"></script>
 	</body>
