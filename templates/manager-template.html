@@ -6,11 +6,34 @@
 				/* cursor : url("{{ url_for('static', filename='icons/rename.svg') }}"); */
 				cursor : url("/assets/icons/rename.svg");
 			}
+			#SVGRoot {
+				position : absolute;
+				left : 0px;
+				top : 0px;
+			}
 		</style>
 	</head>
 	<body>
+		<svg width="16" height="16" viewBox="0 0 32 32" version="1.1" id="SVGRoot" xmlns="http://www.w3.org/2000/svg">
+			<polyline points="" />
+		</svg>
+		<script>
+			const svg = document.getElementById("SVGRoot");
+			function setSvgSize () {
+				const w = window.innerWidth;
+				const h = window.innerHeight;
+				svg.setAttribute("width", w);
+				svg.setAttribute("height", h);
+				svg.setAttribute("viewBox", "0 0 "+w+" "+h);
+			}
+			window.addEventListener("resize", () => {
+				setSvgSize();
+			});
+		</script>
+		<script src="/assets/js/manager-svg.js"></script>
 		<img src="/assets/icons/rename.svg">
 		<img src="/assets/cursors/edit.svg">
+		<img src="/assets/icons/delete.svg">
 		<h1 id="proj-name" onclick="managename()">{{ project_name }}</h1>
 		<div id="indent">
 			<h2 class="pri-label">Top Priority</h2>
