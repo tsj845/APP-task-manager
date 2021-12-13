@@ -11,7 +11,7 @@ def mkTask (value, priority="med", labels=None, subtasks=None):
 	task = {"disp-value":value, "priority":priority, "labels":labels if labels else [], "subtasks":subtasks if subtasks else []}
 	return task
 
-projects = {"project1":{"low":[{"disp-value":"task1", "priority":"low", "labels":[], "subtasks":[{"disp-value":"subtask1"}]}, {"disp-value":"task2", "priority":"low", "labels":[]}, {"disp-value":"task3", "priority":"low", "labels":[]}], "med":[{"disp-value":"task4", "priority":"med", "labels":[]}], "high":[{"disp-value":"task5", "priority":"high", "labels":[]}], "top-e":True, "top":{"disp-value":"task6", "priority":"top", "labels":["top"]}}}
+projects = {"project1":[{"name":"task1", "priority":"low", "labels":[], "subtasks":[], "locked":False}]}
 
 @server.endpoint("index")
 def projectsf ():
@@ -26,7 +26,7 @@ def useful_functions():
 		if "subtasks" in task:
 			html = "<p class=\'task\'>" + task["disp-value"] + "</p>" + "<ul>"
 			for subtask in task["subtasks"]:
-				html += f"<li onclick=showmanage({subtask})>" + task_html(subtask) + "</li>"
+				html += f"<li>" + task_html(subtask) + "</li>"
 			html += "</ul>"
 			return html
 		else:
