@@ -5,6 +5,7 @@ body {
     /* background-color: #eee; */
 }
 #task-list {
+    width : fit-content;
     position : relative;
     left : 20px;
     /* text-indent : 20; */

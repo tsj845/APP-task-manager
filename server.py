@@ -15,7 +15,7 @@ def mkTask (value, priority="med", labels=None, subtasks=None, locked=False):
 	return task
 
 project1tasks = [
-	{"name":"task1", "priority":"low", "labels":[], "subtasks":[], "locked":False, "completed":False},
+	{"name":"anoutrageouslylongtaskname", "priority":"low", "labels":[], "subtasks":[], "locked":False, "completed":False},
 	{"name":"task2", "priority":"high", "labels":[], "subtasks":[], "locked":False, "completed":False}
 ]
 
@@ -77,6 +77,41 @@ def boot_client (data):
 	print(dir(flask_socketio.flask.request), "request")
 	print(flask_socketio.flask.request.sid)
 	emit("boot-res", {"tasks":projects[data["project"]]})
+
+@socketio.on("rename-task")
+def rename_task (data):
+	origin = data["origin"]
+	oldname = data["name"]
+	newname = data["newname"]
+	proj = projects[origin]
+	index = -1
+	for i in range(len(proj)):
+		if (proj[i]["name"] == oldname):
+			index = i
+			break
+	if (index < 0):
+		return
+	proj[i]["name"] = newname
+	projects[origin] = proj
+	data["id"] = 1
+	emit("update", data, to=origin)
+
+@socketio.on("task-pri")
+def task_pri (data):
+	origin = data["origin"]
+	name = data["name"]
+	priority = data["priority"]
+	proj = projects[origin]
+	index = -1
+	for i in range(len(proj)):
+		if (proj[i]["name"] == name):
+			index = i
+			break
+	if (index < 0):
+		return
+	proj[i]["priority"] = priority
+	data["id"] = 4
+	emit("update", data, to=origin)
 
 @socketio.on("leav-proj")
 def leave_project ():

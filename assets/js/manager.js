@@ -10,6 +10,7 @@ let booted = false;
 function makeTask (data) {
     const cont = document.createElement("div");
     cont.className = "task";
+    cont.id = "task-"+data.name;
     const name = document.createElement("div");
     name.className = "task-name";
     const nametext = document.createElement("span");
@@ -59,18 +60,33 @@ socket.on("boot-res", (data) => {
     }
 });
 
-socket.on("update", (data) => {
-    const originator = data.sender;
-    if (socket.id === originator) {
-        return;
+function update_task_name (name, newname) {
+    const task = document.getElementById("task-"+name);
+    task.id = "task-"+newname;
+    task.children[0].children[0].textContent = newname;
+}
+
+function update_task_priority (name, priority) {
+    const task = document.getElementById("task-"+name);
+    for (let i in tasks) {
+        let task = tasks[i];
+        if (task.name === name) {
+            task.priority = priority;
+            break;
+        }
     }
+    task.children[1].children[0].textContent = priority;
+}
+
+socket.on("update", (data) => {
     const upid = data.id;
     switch (upid) {
-        // name change
+        // project name change
         case 0:
             break;
-        // task property changed
+        // task name changed
         case 1:
+            update_task_name(data.name, data.newname);
             break;
         // task removed
         case 2:
@@ -78,8 +94,20 @@ socket.on("update", (data) => {
         // task added
         case 3:
             break;
+        // task priority changed
+        case 4:
+            update_task_priority(data.name, data.priority);
+            break;
     }
 });
+
+function change_task_name (task, newname) {
+    socket.emit("rename-task", {"name":task, "origin":origin, "newname":newname});
+}
+
+function change_task_priority (task, priority) {
+    socket.emit("task-pri", {"name":task, "origin":origin, "priority":priority});
+}
 
 let command = false;
 
