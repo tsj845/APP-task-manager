@@ -1,12 +1,9 @@
 from flask import Flask
 from flask import render_template as render
-import flask
 import flask_socketio
 SocketIO = flask_socketio.SocketIO
 send = flask_socketio.send
 emit = flask_socketio.emit
-# print(dir(flask_socketio))
-# from flask_socketio import SocketIO, send, emit, join_room, leave_room
 from werkzeug.exceptions import abort
 
 server = Flask(__name__, static_folder="assets")
@@ -74,6 +71,12 @@ def boot_client (data):
 	print(str(flask_socketio.has_request_context()), "boot")
 	print(dir(flask_socketio.flask.request), "request")
 	print(flask_socketio.flask.request.sid)
+
+@socketio.on("leav-proj")
+def leave_project ():
+	# id = flask_socketio.flask.request.sid
+	rooms = flask_socketio.rooms()
+	flask_socketio.leave_room(rooms[1])
 
 # server
 socketio.run(server, host="127.0.0.1", port="3000", debug=True)
