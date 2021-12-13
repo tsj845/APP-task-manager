@@ -1,0 +1,101 @@
+.task, .pri-label, #indent > ul {
+    margin : 0px;
+}
+body {
+    /* background-color: #eee; */
+}
+#indent {
+    text-indent : 20;
+}
+#indent > * > * {
+    text-indent : 0;
+}
+/* project name */
+h1#proj-name {
+    /* possible */
+    /* user-select : none; */
+    color : black;
+    transition : color linear 0.25s;
+}
+h1#proj-name:hover {
+    cursor : hand;
+    /* cursor : default; */
+    color : #444;
+}
+/* manage task buttons */
+.taskmanage {
+    background : #444;
+    color : white;
+    border-color : #666;
+    transition : background-color linear 0.25s, border-color linear 0.25s;
+}
+.task:hover > .taskmanage, .taskmanage:hover {
+    background : #666;
+    border-color : #888;
+    cursor : hand;
+}
+/* tasks */
+.task {
+    /* for debugging */
+    /* border : solid lime; */
+    width : fit-content;
+    color : black;
+    transition : color linear 0.25s;
+}
+.task:hover {
+    color : gray;
+    cursor : hand;
+}
+/* priority cat styling*/
+h2.pri-label {
+    /**/
+}
+h2.pri-label:hover {
+    cursor : default;
+}
+/* highest priority task*/
+h3#pri-top {
+    /**/
+}
+/* high priority tasks */
+ul#pri-high {
+    /**/
+}
+/* medium priority tasks */
+ul#pri-med {
+    /**/
+}
+/* low priority tasks */
+ul#pri-low {
+    /**/
+}
+/* task manager dialog */
+dialog#manage-task::backdrop {
+    background : #44444488;
+}
+dialog#manage-task {
+    border : solid gray;
+    background : #555;
+}
+
+#menu {
+    position : absolute;
+}
+
+#menu > input {
+    width : 100%;
+    border : solid #444 2px;
+    background : gray;
+    color : black;
+    transition : border linear 0.25s, background-color linear 0.25s, color linear 0.25s;
+}
+
+#menu > input:hover {
+    border : solid #666 2px;
+    background : dimgray;
+    color : #333;
+}
+
+.hidden {
+    display : none;
+}

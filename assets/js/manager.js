@@ -12,6 +12,7 @@ const topp = document.getElementById("pri-top");
 const ntd = document.getElementById("new-task-dialog");
 const ntdname = document.getElementById("ntd-disp-value");
 const ntdprio = document.getElementById("ntd-priority");
+const menu = document.getElementById("menu");
 let current_task = null;
 function mkTask (data) {
     const l = document.createElement("li");
@@ -125,4 +126,15 @@ socket.on("add-success", () => {
 
 socket.on("join-fail", () => {
     window.location.pathname = "/err/0";
+});
+
+document.addEventListener("click", (e) => {
+    menu.className = "hidden";
+});
+
+document.addEventListener("contextmenu", (e) => {
+    menu.className = "";
+    menu.style.cssText = "left:"+e.clientX+";top:"+e.clientY+";";
+    e.preventDefault();
+    return false;
 });

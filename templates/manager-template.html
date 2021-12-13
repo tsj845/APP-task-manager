@@ -1,86 +1,6 @@
 <html>
 	<head>
-		<style>
-		    .task, .pri-label, #indent > ul {
-			    margin : 0px;
-			}
-			body {
-			    /* background-color: #eee; */
-			}
-			#indent {
-				text-indent : 20;
-			}
-			#indent > * > * {
-				text-indent : 0;
-			}
-			/* project name */
-			h1#proj-name {
-				/* possible */
-				/* user-select : none; */
-				color : black;
-				transition : color linear 0.25s;
-			}
-			h1#proj-name:hover {
-				cursor : hand;
-				/* cursor : default; */
-				color : #444;
-			}
-			/* manage task buttons */
-			.taskmanage {
-				background : #444;
-				color : white;
-				border-color : #666;
-				transition : background-color linear 0.25s, border-color linear 0.25s;
-			}
-			.task:hover > .taskmanage, .taskmanage:hover {
-				background : #666;
-				border-color : #888;
-				cursor : hand;
-			}
-			/* tasks */
-			.task {
-				/* for debugging */
-				/* border : solid lime; */
-				width : fit-content;
-				color : black;
-				transition : color linear 0.25s;
-			}
-			.task:hover {
-				color : gray;
-				cursor : hand;
-			}
-			/* priority cat styling*/
-			h2.pri-label {
-				/**/
-			}
-			h2.pri-label:hover {
-				cursor : default;
-			}
-			/* highest priority task*/
-			h3#pri-top {
-				/**/
-			}
-			/* high priority tasks */
-			ul#pri-high {
-				/**/
-			}
-			/* medium priority tasks */
-			ul#pri-med {
-				/**/
-			}
-			/* low priority tasks */
-			ul#pri-low {
-				/**/
-			}
-			/* task manager dialog */
-			dialog#manage-task::backdrop {
-				background : #44444488;
-			}
-			dialog#manage-task {
-				border : solid gray;
-				background : #555;
-			}
-		</style>
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/manager.css') }}" />
 	</head>
 	<body>
 		<h1 id="proj-name" onclick="managename()">{{ project_name }}</h1>
@@ -141,6 +61,10 @@
 			<br><br>
 			<input type="button" value="cancel" onclick="document.getElementById('new-task-dialog').close()">
 		</dialog>
+		<div id="menu" class="hidden">
+			<input type="button" value="rename project" onclick="managename()"><br>
+			<input type="button" value="new task" onclick="newtask()">
+		</div>
 		<input type="button" value="new task" onclick="newtask()">
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
 		<script src="{{ url_for('static', filename='js/manager.js') }}"></script>
