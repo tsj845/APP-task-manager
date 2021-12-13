@@ -14,7 +14,12 @@ def mkTask (value, priority="med", labels=None, subtasks=None, locked=False):
 	task = {"name":value, "priority":priority, "labels":labels if labels else [], "subtasks":subtasks if subtasks else [], "locked":True if locked else False}
 	return task
 
-projects = {"project1":[{"name":"task1", "priority":"low", "labels":[], "subtasks":[], "locked":False}]}
+project1tasks = [
+	{"name":"task1", "priority":"low", "labels":[], "subtasks":[], "locked":False, "completed":False},
+	{"name":"task2", "priority":"high", "labels":[], "subtasks":[], "locked":False, "completed":False}
+]
+
+projects = {"project1":project1tasks}
 
 @server.endpoint("index")
 def projectsf ():
@@ -60,7 +65,7 @@ def handle_internal_error (e):
 # server.register_error_handler(404, handle_bad_request)
 
 @socketio.on("connection")
-def hand_connect ():
+def hand_connect (*a):
 	pass
 
 @socketio.on("boot")
@@ -71,6 +76,7 @@ def boot_client (data):
 	print(str(flask_socketio.has_request_context()), "boot")
 	print(dir(flask_socketio.flask.request), "request")
 	print(flask_socketio.flask.request.sid)
+	emit("boot-res", {"tasks":projects[data["project"]]})
 
 @socketio.on("leav-proj")
 def leave_project ():

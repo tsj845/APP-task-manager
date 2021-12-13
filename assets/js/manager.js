@@ -20,8 +20,20 @@ function makeTask (data) {
     const prioritytext = document.createElement("span");
     prioritytext.textContent = data.priority;
     priority.appendChild(prioritytext);
+    const completed = document.createElement("div");
+    completed.className = "task-completed";
+    const completedtext = document.createElement("span");
+    completedtext.textContent = data.completed ? "complete" : "incomplete";
+    completed.appendChild(completedtext);
+    const locked = document.createElement("div");
+    locked.className = "task-locked";
+    const lockedtext = document.createElement("span");
+    lockedtext.textContent = data.locked ? "locked" : "unlocked";
+    locked.appendChild(lockedtext);
     cont.appendChild(name);
     cont.appendChild(priority);
+    cont.appendChild(completed);
+    cont.appendChild(locked);
     tasklist.appendChild(cont);
 }
 

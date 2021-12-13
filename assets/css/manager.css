@@ -4,8 +4,10 @@
 body {
     /* background-color: #eee; */
 }
-#indent {
-    text-indent : 20;
+#task-list {
+    position : relative;
+    left : 20px;
+    /* text-indent : 20; */
 }
 #indent > * > * {
     text-indent : 0;
@@ -19,65 +21,40 @@ h1#proj-name {
     transition : color linear 0.25s;
 }
 h1#proj-name:hover {
-    cursor : hand;
-    /* cursor : default; */
     color : #444;
     cursor : url("/assets/cursors/edit.svg") 0 32, auto;
 }
-/* manage task buttons */
-.taskmanage {
-    background : #444;
-    color : white;
-    border-color : #666;
-    transition : background-color linear 0.25s, border-color linear 0.25s;
+
+.task-priority, .task-locked {
+    justify-self : right;
+    margin-right : 5px;
 }
-.task:hover > .taskmanage, .taskmanage:hover {
-    background : #666;
-    border-color : #888;
+
+.task-name, .task-completed {
+    margin-left : 5px;
 }
+
+.task-locked, .task-priority, .task-name, .task-completed {
+    /* width : max-content; */
+    /* width : fit-content; */
+    /* width : min(fit-content, 100%); */
+    word-break : break-all;
+}
+
 /* tasks */
 .task {
-    /* for debugging */
-    /* border : solid lime; */
-    width : fit-content;
+    border : solid #808080;
+    background : #a0a0a0;
+    width : calc(20vw - 20px);
     color : black;
     transition : color linear 0.25s;
+    display : grid;
+    grid-template-columns : 1.125fr 0.875fr;
+    /* grid-template-columns : 1fr 1fr; */
 }
 .task:hover {
     color : gray;
-    /* cursor : hand; */
     cursor : url("/assets/cursors/edit.svg") 0 32, auto;
-}
-/* priority cat styling*/
-h2.pri-label {
-    /**/
-}
-h2.pri-label:hover {
-    cursor : default;
-}
-/* highest priority task*/
-h3#pri-top {
-    /**/
-}
-/* high priority tasks */
-ul#pri-high {
-    /**/
-}
-/* medium priority tasks */
-ul#pri-med {
-    /**/
-}
-/* low priority tasks */
-ul#pri-low {
-    /**/
-}
-/* task manager dialog */
-dialog#manage-task::backdrop {
-    background : #44444488;
-}
-dialog#manage-task {
-    border : solid gray;
-    background : #555;
 }
 
 #menu {
