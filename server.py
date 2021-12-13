@@ -39,9 +39,20 @@ def projectf (project):
 		abort(404)
 	return render("manager-template.html", project_name=project, project=projects[project])
 
+@server.route("/err/<code>")
+def errorredirect (code):
+	if (code == 0):
+		abort(404)
+	else:
+		abort(500)
+
 @server.errorhandler(404)
 def handle_bad_request (e):
 	return render("errors/400.html"), 404
+
+@server.errorhandler(500)
+def handle_internal_error (e):
+	return render("errors/500.html"), 500
 
 # server.register_error_handler(404, handle_bad_request)
 

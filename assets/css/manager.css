@@ -15,12 +15,14 @@ h1#proj-name {
     /* possible */
     /* user-select : none; */
     color : black;
+    width : fit-content;
     transition : color linear 0.25s;
 }
 h1#proj-name:hover {
     cursor : hand;
     /* cursor : default; */
     color : #444;
+    cursor : url("/assets/cursors/edit.svg") 0 32, auto;
 }
 /* manage task buttons */
 .taskmanage {
@@ -32,7 +34,6 @@ h1#proj-name:hover {
 .task:hover > .taskmanage, .taskmanage:hover {
     background : #666;
     border-color : #888;
-    cursor : hand;
 }
 /* tasks */
 .task {
@@ -44,7 +45,8 @@ h1#proj-name:hover {
 }
 .task:hover {
     color : gray;
-    cursor : hand;
+    /* cursor : hand; */
+    cursor : url("/assets/cursors/edit.svg") 0 32, auto;
 }
 /* priority cat styling*/
 h2.pri-label {
