@@ -1,6 +1,7 @@
 <html>
 	<head>
-		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/manager.css') }}" />
+		<link rel="stylesheet" type="text/css" href="/assets/css/manager.css" />
+		<link rel="stylesheet" type="text/css" href="/assets/css/manager-cards.css" />
 		<style>
 			.task:hover {
 				/* cursor : url("{{ url_for('static', filename='icons/rename.svg') }}"); */
@@ -14,23 +15,6 @@
 		</style>
 	</head>
 	<body>
-		<svg width="16" height="16" viewBox="0 0 32 32" version="1.1" id="SVGRoot" xmlns="http://www.w3.org/2000/svg">
-			<polyline points="" />
-		</svg>
-		<script>
-			const svg = document.getElementById("SVGRoot");
-			function setSvgSize () {
-				const w = window.innerWidth;
-				const h = window.innerHeight;
-				svg.setAttribute("width", w);
-				svg.setAttribute("height", h);
-				svg.setAttribute("viewBox", "0 0 "+w+" "+h);
-			}
-			window.addEventListener("resize", () => {
-				setSvgSize();
-			});
-		</script>
-		<script src="/assets/js/manager-svg.js"></script>
 		<img src="/assets/icons/rename.svg">
 		<img src="/assets/cursors/edit.svg">
 		<img src="/assets/icons/delete.svg">
@@ -98,6 +82,6 @@
 		</div>
 		<!-- <input type="button" value="new task" onclick="newtask()"> -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
-		<script src="{{ url_for('static', filename='js/manager.js') }}"></script>
+		<script src="/assets/js/manager.js"></script>
 	</body>
 </html>

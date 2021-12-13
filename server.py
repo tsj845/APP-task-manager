@@ -26,7 +26,7 @@ def useful_functions():
 		if "subtasks" in task:
 			html = "<p class=\'task\'>" + task["disp-value"] + "</p>" + "<ul>"
 			for subtask in task["subtasks"]:
-				html += "<li>" + task_html(subtask) + "</li>"
+				html += f"<li onclick=showmanage({subtask})>" + task_html(subtask) + "</li>"
 			html += "</ul>"
 			return html
 		else:
