@@ -1,50 +1,13 @@
 <html>
 	<head>
 		<link rel="stylesheet" type="text/css" href="/assets/css/manager.css" />
-		<link rel="stylesheet" type="text/css" href="/assets/css/manager-cards.css" />
-		<style>
-			.task:hover {
-				cursor : url("/assets/icons/rename.svg");
-			}
-			#SVGRoot {
-				position : absolute;
-				left : 0px;
-				top : 0px;
-			}
-		</style>
 	</head>
 	<body>
 		<img src="/assets/icons/rename.svg">
 		<img src="/assets/cursors/edit.svg">
 		<img src="/assets/icons/delete.svg">
 		<h1 id="proj-name" onclick="managename()">{{ project_name }}</h1>
-		<div id="indent">
-			<h2 class="pri-label">Top Priority</h2>
-			<ul><li class="task">
-			{% if project["top-e"] %}
-			<h3 id="pri-top" onclick="showmanage({{ project['top'] }})">{{ project["top"]["disp-value"] }}</h3>
-			{% else %}
-			<h3 id="pri-top">no top priority</h3>
-			{% endif %}
-			</li></ul>
-			<h2 class="pri-label">High Priority</h2>
-			<ul id="pri-high">
-				{% for task in project["high"] %}
-				<li class="task" onclick="showmanage({{ task }})">{{ task_html(task) | safe }}</li>
-				{% endfor %}
-			</ul>
-			<h2 class="pri-label">Medium Priority</h2>
-			<ul id="pri-med">
-				{% for task in project["med"] %}
-				<li class="task" onclick="showmanage({{ task }})">{{ task_html(task) | safe }}</li>
-				{% endfor %}
-			</ul>
-			<h2 class="pri-label">Low Priority</h2>
-			<ul id="pri-low">
-				{% for task in project["low"] %}
-				<li class="task" onclick="showmanage({{ task }})">{{ task_html(task) | safe }}</li>
-				{% endfor %}
-			</ul>
+		<div id="task-list">
 		</div>
 		<dialog id="manage-task">
 			<h3 id="mtk-name"></h3>
