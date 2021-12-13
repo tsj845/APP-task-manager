@@ -62,6 +62,13 @@ socket.on("boot-res", (data) => {
 
 function update_task_name (name, newname) {
     const task = document.getElementById("task-"+name);
+    for (let i in tasks) {
+        let task = tasks[i];
+        if (task.name === name) {
+            task.name = newname;
+            break;
+        }
+    }
     task.id = "task-"+newname;
     task.children[0].children[0].textContent = newname;
 }
@@ -78,6 +85,34 @@ function update_task_priority (name, priority) {
     task.children[1].children[0].textContent = priority;
 }
 
+function update_task_description (name, desc) {
+    // const task = document.getElementById("task-"+name);
+    for (let i in tasks) {
+        let task = tasks[i];
+        if (task.name === name) {
+            task.desc = desc;
+            break;
+        }
+    }
+    // task.children[1].children[0].textContent = priority;
+}
+
+function update_task_removed (name) {
+    for (let i in tasks) {
+        let task = tasks[i];
+        if (task.name === name) {
+            tasks.splice(i, 1);
+            break;
+        }
+    }
+    tasklist.removeChild(document.getElementById("task-"+name));
+}
+
+function update_task_added (task) {
+    tasks.push(task);
+    makeTask(task);
+}
+
 socket.on("update", (data) => {
     const upid = data.id;
     switch (upid) {
@@ -90,13 +125,19 @@ socket.on("update", (data) => {
             break;
         // task removed
         case 2:
+            update_task_removed(data.name);
             break;
         // task added
         case 3:
+            update_task_added(data.task);
             break;
         // task priority changed
         case 4:
             update_task_priority(data.name, data.priority);
+            break;
+        // task description changed
+        case 5:
+            update_task_description(data.name, data.desc);
             break;
     }
 });
@@ -107,6 +148,18 @@ function change_task_name (task, newname) {
 
 function change_task_priority (task, priority) {
     socket.emit("task-pri", {"name":task, "origin":origin, "priority":priority});
+}
+
+function change_task_description (task, description) {
+    socket.emit("task-desc", {"name":task, "origin":origin, "desc":description});
+}
+
+function change_task_remove (task) {
+    socket.emit("remove-task", {"name":task, "origin":origin});
+}
+
+function change_task_add (task) {
+    socket.emit("add-task", {"task":task, "origin":origin});
 }
 
 let command = false;

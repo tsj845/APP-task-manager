@@ -15,8 +15,8 @@ def mkTask (value, priority="med", labels=None, subtasks=None, locked=False):
 	return task
 
 project1tasks = [
-	{"name":"anoutrageouslylongtaskname", "priority":"low", "labels":[], "subtasks":[], "locked":False, "completed":False},
-	{"name":"task2", "priority":"high", "labels":[], "subtasks":[], "locked":False, "completed":False}
+	{"name":"anoutrageouslylongtaskname", "priority":"low", "desc":"a testing task", "labels":[], "subtasks":[], "locked":False, "completed":False},
+	{"name":"task2", "priority":"high", "desc":"a testing task", "labels":[], "subtasks":[], "locked":False, "completed":False}
 ]
 
 projects = {"project1":project1tasks}
@@ -111,6 +111,48 @@ def task_pri (data):
 		return
 	proj[i]["priority"] = priority
 	data["id"] = 4
+	emit("update", data, to=origin)
+
+@socketio.on("task-desc")
+def task_desc (data):
+	origin = data["origin"]
+	name = data["name"]
+	desc = data["desc"]
+	proj = projects[origin]
+	index = -1
+	for i in range(len(proj)):
+		if (proj[i]["name"] == name):
+			index = i
+			break
+	if (index < 0):
+		return
+	proj[i]["desc"] = desc
+	data["id"] = 5
+	emit("update", data, to=origin)
+
+@socketio.on("remove-task")
+def remove_task (data):
+	origin = data["origin"]
+	name = data["name"]
+	proj = projects[origin]
+	found = True
+	for i in range(len(proj)):
+		if (proj[i]["name"] == name):
+			found = False
+			proj.pop(i)
+			break
+	if (found):
+		return
+	data["id"] = 2
+	emit("update", data, to=origin)
+
+@socketio.on("add-task")
+def add_task (data):
+	origin = data["origin"]
+	task = data["task"]
+	proj = projects[origin]
+	proj.append(task)
+	data["id"] = 3
 	emit("update", data, to=origin)
 
 @socketio.on("leav-proj")
