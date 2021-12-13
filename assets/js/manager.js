@@ -128,13 +128,33 @@ socket.on("join-fail", () => {
     window.location.pathname = "/err/0";
 });
 
+let command = false;
+
+document.addEventListener("keydown", (e) => {
+    const key = e.code.toString();
+    if (key === "MetaLeft" || key === "MetaRight") {
+        command = true;
+    }
+});
+
+document.addEventListener("keyup", (e) => {
+    const key = e.code.toString();
+    if (key === "MetaLeft" || key === "MetaRight") {
+        command = false;
+    }
+});
+
 document.addEventListener("click", (e) => {
     menu.className = "hidden";
 });
 
 document.addEventListener("contextmenu", (e) => {
-    menu.className = "";
-    menu.style.cssText = "left:"+e.clientX+";top:"+e.clientY+";";
-    e.preventDefault();
-    return false;
+    if (!command) {
+        menu.className = "";
+        menu.style.cssText = "left:"+e.clientX+";top:"+e.clientY+";";
+        e.preventDefault();
+        return false;
+    } else {
+        command = false;
+    }
 });
