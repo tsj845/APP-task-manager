@@ -124,19 +124,18 @@ body {
 #new-task-controls * {
     float: left;
     height: 32px;
+    background-color: #ddd;
+    border: none;    
 }
 #new-task-button {
-    background-color: #ddd;
     cursor: pointer;
 }
 #new-task-input {
     width: calc(15vw - 32px);
-    border: none;
-    background-color: #eee;
+    border-left: 2px solid black;
 }
 #new-task-priority {
     width: 5vw;
-    background-color: #ddd;
-    border: none;
+    border-left: 2px solid black;
     cursor: pointer;
 }
