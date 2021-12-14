@@ -116,12 +116,3 @@ body {
 .hidden {
     display : none;
 }
-
-#sidepanel {
-    float: left;
-    width: fit-content;
-}
-#mainpanel {
-    position: relative;
-    left: 25px;
-}
