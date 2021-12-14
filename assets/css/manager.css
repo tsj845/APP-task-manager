@@ -2,11 +2,10 @@
     margin : 0px;
 }
 body {
-    /* background-color: #eee; */
+    margin: 0px;
 }
 #task-list {
-    width : fit-content;
-    position : relative;
+    width : 20vw;
 }
 
 #no-task {
@@ -33,11 +32,11 @@ body {
 
 #side-panel {
     position : absolute;
-    left : calc(20vw + 4px);
-    top : 2px;
-    border : solid gray 2px;
-    width : calc(80vw - 8px);
-    height : calc(100vh - 8px);
+    left : 20vw;
+    top: 0px;
+    border-left : solid black 2px;
+    width : 80vw;
+    height : 100vh;
 }
 
 /* project name */
@@ -52,6 +51,8 @@ body {
     width : fit-content;
     transition : color linear 0.25s;
     margin-top: 0px;
+    width: 20vw;
+    border-bottom: 2px solid black;
 }
 #proj-name:hover {
     color : #444;
@@ -76,9 +77,8 @@ body {
 
 /* tasks */
 .task {
-    border : solid #a0a0a0 2px;
-    background : #d4d4d4;
-    width : calc(20vw - 24px);
+    border-bottom : solid black 2px;
+    width : 20vw;
     color : black;
     transition : color linear 0.25s/*, border linear 0.25s*/;
     display : grid;
@@ -114,8 +114,4 @@ body {
 
 .hidden {
     display : none;
-}
-
-#sel-task-name::before {
-    content : "name: ";
 }
