@@ -2,6 +2,8 @@ let socket = io();
 const pname = document.getElementById("proj-name");
 pname.size = pname.value.length;
 const panel = document.getElementById("side-panel");
+const ntsk_cover = document.getElementById("no-task");
+const seltsk_name = document.getElementById("sel-task-name");
 const tasklist = document.getElementById("task-list");
 const menu = document.getElementById("menu");
 let origin = pname.value;
@@ -9,11 +11,16 @@ let tasks = null;
 
 let booted = false;
 
+function display_task (id, taskobj) {
+    const elem = document.getElementById(id);
+    ntsk_cover.className = "hidden";
+    seltsk_name.value = taskobj.name;
+}
+
 function makeTask (data) {
     const cont = document.createElement("div");
     cont.className = "task";
     cont.id = "task-"+data.name;
-    // cont.innerHTML = "<div class='task-name'><span>" + data.name + "</span></div><div class='task-priority'><span>" + data.priority + "</span></div><div class='task-completed'><span>" + (data.completed ? "complete" : "incomplete") + "</span></div><div class='task-locked'><span>" + (data.locked ? "locked" : "unlocked") + "</span></div>";
     const name = document.createElement("div");
     name.className = "task-name";
     const nametext = document.createElement("span");
@@ -39,6 +46,9 @@ function makeTask (data) {
     cont.appendChild(completed);
     cont.appendChild(locked);
     tasklist.appendChild(cont);
+    cont.onclick = () => {
+        display_task(cont.id, data);
+    };
 }
 
 function bootrender () {

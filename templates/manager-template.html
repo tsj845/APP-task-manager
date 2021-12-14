@@ -6,7 +6,7 @@
 		<img src="/assets/icons/rename.svg">
 		<img src="/assets/cursors/edit.svg">
 		<img src="/assets/icons/delete.svg">
-		<input type="text" id="proj-name" value="{{ project_name }}" oninput="this.size=this.value.length">
+		<input type="text" id="proj-name" value="{{ project_name }}" autocomplete="off" oninput="this.size=this.value.length">
 		<div id="task-list"></div>
 		<div id="side-panel">
 			<div id="no-task" class="">
@@ -14,8 +14,8 @@
 					<h1>No Task Selected</h1>
 				</div>
 			</div>
-			<div id="task-info">
-				<span>testing</span>
+			<div id="sel-task-info">
+				<input type="text" id="sel-task-name" autocomplete="off"><br>
 			</div>
 		</div>
 		<div id="menu" class="hidden">
