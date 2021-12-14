@@ -116,14 +116,27 @@ body {
     display : none;
 }
 
+#new-task-controls {
+    height: 32px;
+    width: 20vw;
+    border-bottom: 2px solid black;
+}
 #new-task-controls * {
     float: left;
     height: 32px;
 }
-
+#new-task-button {
+    background-color: #ddd;
+    cursor: pointer;
+}
 #new-task-input {
     width: calc(15vw - 32px);
+    border: none;
+    background-color: #eee;
 }
 #new-task-priority {
     width: 5vw;
+    background-color: #ddd;
+    border: none;
+    cursor: pointer;
 }
