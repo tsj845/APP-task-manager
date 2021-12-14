@@ -10,9 +10,6 @@ body {
     left : 20px;
     /* text-indent : 20; */
 }
-#indent > * > * {
-    text-indent : 0;
-}
 /* project name */
 h1#proj-name {
     /* possible */
