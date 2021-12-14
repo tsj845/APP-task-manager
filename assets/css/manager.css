@@ -7,18 +7,53 @@ body {
 #task-list {
     width : fit-content;
     position : relative;
-    left : 20px;
-    /* text-indent : 20; */
+    left : 16px;
 }
+
+#no-task {
+    position : absolute;
+    z-index : 10000;
+    background : white;
+    width : 100%;
+    height : 100%;
+}
+
+#no-ask-cont {
+    height : 100%;
+    display : flex;
+    flex-direction : row;
+    align-items : center;
+}
+
+#no-task > div > h1 {
+    width : 100%;
+    display : flex;
+    flex-direction : column;
+    align-items : center;
+}
+
+#side-panel {
+    position : absolute;
+    left : calc(20vw + 4px);
+    top : 2px;
+    border : solid gray 2px;
+    width : calc(80vw - 8px);
+    height : calc(100vh - 8px);
+}
+
 /* project name */
-h1#proj-name {
+#proj-name {
     /* possible */
     /* user-select : none; */
+    display : block;
+    border : none;
+    font-size : 2em;
+    font-weight : bold;
     color : black;
     width : fit-content;
     transition : color linear 0.25s;
 }
-h1#proj-name:hover {
+#proj-name:hover {
     color : #444;
     cursor : url("/assets/cursors/edit.svg") 0 32, auto;
 }
@@ -41,17 +76,21 @@ h1#proj-name:hover {
 
 /* tasks */
 .task {
-    border : solid #808080;
-    background : #a0a0a0;
-    width : calc(20vw - 20px);
+    border : solid #a0a0a0 2px;
+    background : #d4d4d4;
+    width : calc(20vw - 24px);
     color : black;
-    transition : color linear 0.25s;
+    transition : color linear 0.25s/*, border linear 0.25s*/;
     display : grid;
     grid-template-columns : 1.125fr 0.875fr;
+    /* padding-left : 2px;
+    padding-right : 2px; */
     /* grid-template-columns : 1fr 1fr; */
 }
 .task:hover {
-    color : gray;
+    /* width : calc(20vw - 24px);
+    border : solid #a0a0a0; */
+    color : #585858;
     cursor : url("/assets/cursors/edit.svg") 0 32, auto;
 }
 

@@ -6,10 +6,20 @@
 		<img src="/assets/icons/rename.svg">
 		<img src="/assets/cursors/edit.svg">
 		<img src="/assets/icons/delete.svg">
-		<h1 id="proj-name" onclick="managename()">{{ project_name }}</h1>
+		<input type="text" id="proj-name" value="{{ project_name }}" oninput="this.size=this.value.length">
 		<div id="task-list"></div>
+		<div id="side-panel">
+			<div id="no-task" class="">
+				<div id="no-ask-cont">
+					<h1>No Task Selected</h1>
+				</div>
+			</div>
+			<div id="task-info">
+				<span>testing</span>
+			</div>
+		</div>
 		<div id="menu" class="hidden">
-			<input type="button" value="rename project" onclick="managename()"><br>
+			<input type="button" value="rename project" onclick="document.getElementById('proj-name').select()"><br>
 			<input type="button" value="new task" onclick="newtask()">
 		</div>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>

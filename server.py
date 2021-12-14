@@ -78,6 +78,16 @@ def boot_client (data):
 	print(flask_socketio.flask.request.sid)
 	emit("boot-res", {"tasks":projects[data["project"]]})
 
+@socketio.on("rename-proj")
+def rename_proj (data):
+	origin = data["origin"]
+	name = data["name"]
+	proj = projects[origin]
+	projects[name] = proj
+	projects.pop(origin)
+	data["id"] = 0
+	emit("update", data, to=origin)
+
 @socketio.on("rename-task")
 def rename_task (data):
 	origin = data["origin"]

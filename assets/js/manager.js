@@ -1,8 +1,10 @@
 let socket = io();
 const pname = document.getElementById("proj-name");
+pname.size = pname.value.length;
+const panel = document.getElementById("side-panel");
 const tasklist = document.getElementById("task-list");
 const menu = document.getElementById("menu");
-let origin = pname.textContent;
+let origin = pname.value;
 let tasks = null;
 
 let booted = false;
@@ -119,6 +121,7 @@ socket.on("update", (data) => {
     switch (upid) {
         // project name change
         case 0:
+            window.location.pathname = "/projects/"+data.name;
             break;
         // task name changed
         case 1:
@@ -142,6 +145,10 @@ socket.on("update", (data) => {
             break;
     }
 });
+
+function change_project_name (newname) {
+    socket.emit("rename-proj", {"origin":origin, "name":newname});
+}
 
 function change_task_name (task, newname) {
     socket.emit("rename-task", {"name":task, "origin":origin, "newname":newname});
