@@ -17,6 +17,7 @@ h1#proj-name {
     color : black;
     width : fit-content;
     transition : color linear 0.25s;
+    margin-top: 0px;
 }
 h1#proj-name:hover {
     color : #444;
@@ -75,4 +76,13 @@ h1#proj-name:hover {
 
 .hidden {
     display : none;
+}
+
+#sidepanel {
+    float: left;
+    width: fit-content;
+}
+#mainpanel {
+    position: relative;
+    left: 25px;
 }

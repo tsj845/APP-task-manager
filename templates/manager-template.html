@@ -3,14 +3,20 @@
 		<link rel="stylesheet" type="text/css" href="/assets/css/manager.css" />
 	</head>
 	<body>
-		<img src="/assets/icons/rename.svg">
-		<img src="/assets/cursors/edit.svg">
-		<img src="/assets/icons/delete.svg">
-		<h1 id="proj-name" onclick="managename()">{{ project_name }}</h1>
-		<div id="task-list"></div>
-		<div id="menu" class="hidden">
-			<input type="button" value="rename project" onclick="managename()"><br>
-			<input type="button" value="new task" onclick="newtask()">
+		<!--<img src="/assets/icons/rename.svg">-->
+		<!--<img src="/assets/cursors/edit.svg">-->
+		<!--<img src="/assets/icons/delete.svg">-->
+		<div id="sidepanel">
+			<h1 id="proj-name" onclick="managename()">{{ project_name }}</h1>
+			<div id="task-list"></div>
+			<div id="menu" class="hidden">
+				<input type="button" value="rename project" onclick="managename()"><br>
+				<input type="button" value="new task" onclick="newtask()">
+			</div>
+		</div>
+		<div id="mainpanel">
+			<h1>Placeholder Text</h1>
+			<p>more placeholder text</p>
 		</div>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
 		<script src="/assets/js/manager.js"></script>
