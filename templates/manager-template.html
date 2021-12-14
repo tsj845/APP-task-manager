@@ -6,8 +6,19 @@
 		<img src="/assets/icons/rename.svg">
 		<img src="/assets/cursors/edit.svg">
 		<img src="/assets/icons/delete.svg">
-		<input type="text" id="proj-name" value="{{ project_name }}" oninput="this.size=this.value.length">
-		<div id="task-list"></div>
+		<div id="left-panel">
+			<input type="text" id="proj-name" value="{{ project_name }}" oninput="this.size=this.value.length">
+			<div id="task-list"></div>
+			<div id="new-task-controls">
+				<img src="/assets/icons/plus.svg" id="new-task-button" onclick="change_task_add(document.getElementById('new-task-input').value, document.getElementById('new-task-priority').value)">
+				<input id="new-task-input" onkeydown="if (event.keyCode==13){change_task_add(this.value, document.getElementById('new-task-priority').value)}">
+				<select id="new-task-priority">
+					<option value="low">Low</option>
+					<option value="medium">Medium</option>
+					<option value="high">High</option>
+				</select>
+			</div>
+		</div>
 		<div id="side-panel">
 			<div id="no-task" class="">
 				<div id="no-ask-cont">

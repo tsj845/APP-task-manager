@@ -90,7 +90,7 @@ body {
 .task:hover {
     /* width : calc(20vw - 24px);
     border : solid #a0a0a0; */
-    color : #585858;
+    background-color : #eee;
     cursor : url("/assets/cursors/edit.svg") 0 32, auto;
 }
 
@@ -114,4 +114,16 @@ body {
 
 .hidden {
     display : none;
+}
+
+#new-task-controls * {
+    float: left;
+    height: 32px;
+}
+
+#new-task-input {
+    width: calc(15vw - 32px);
+}
+#new-task-priority {
+    width: 5vw;
 }
