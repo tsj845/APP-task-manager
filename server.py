@@ -113,6 +113,8 @@ def add_subtask (data):
 		step = path[i]
 		index = task_index(search, step)
 		search = search[index]["subtasks"]
+	if (task_index(search, task["name"]) != -1):
+		return
 	search.append(task)
 	print(projects[origin])
 	data["id"] = 7
@@ -207,6 +209,8 @@ def add_task (data):
 	origin = data["origin"]
 	task = data["task"]
 	proj = projects[origin]
+	if (task_index(proj, task["name"]) != -1):
+		return
 	proj.append(task)
 	data["id"] = 3
 	emit("update", data, to=origin)
