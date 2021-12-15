@@ -105,6 +105,16 @@ function task_index (list, task) {
     return -1;
 }
 
+// toggles a task's locked status
+function toggle_task_locked () {
+    change_task_locked(breadpath.slice(1), !current_task.locked);
+}
+
+// updates a subtask's priority
+function change_subtask_priority_1 (value) {
+    change_subtask_priority(breadpath.slice(1), value);
+}
+
 // updates the subtask display
 function update_subtask_display () {
     seltsk_subtasks.replaceChildren();
@@ -125,7 +135,7 @@ function update_subtask_display () {
 // displays a task
 function display_task (taskobj, light) {
     if (typeof taskobj === "string") {
-        taskobj = current_task ? current_task.subtasks[task_index(current_task.subtasks, taskob)] : tasks[task_index(tasks, taskobj)];
+        taskobj = current_task ? current_task.subtasks[task_index(current_task.subtasks, taskobj)] : tasks[task_index(tasks, taskobj)];
     }
     // when light is set don't do anything with breadcrumbs
     if (!light) {
@@ -142,6 +152,7 @@ function display_task (taskobj, light) {
     seltsk_name.value = taskobj.name;
     seltsk_priority.value = taskobj.priority;
     seltsk_desc.value = taskobj.desc;
+    seltsk_locked.src = taskobj.locked ? "/assets/icons/locked.svg" : "/assets/icons/unlocked.svg";
     update_subtask_display();
 }
 
@@ -267,6 +278,30 @@ function update_task_priority (name, priority) {
             break;
         }
     }
+    if (current_task.name === name) {
+        seltsk_priority.selectedIndex = {"low":0,"medium":1,"med":1,"high":2}[priority];
+    }
+}
+
+function update_subtask_priority (path, priority) {
+    let search = tasks;
+    let task = null;
+    let build_path = ["top"];
+    console.log(path);
+    for (let i in path) {
+        console.log(i);
+        build_path.push(path[i]);
+        if (i === path.length-1) {
+            task = search[task_index(search, path[i])];
+            break;
+        }
+        search = search[task_index(search, path[i])].subtasks
+    }
+    console.log(task);
+    task.priority = priority;
+    if (breadpath.join(",") === build_path.join(",")) {
+        seltsk_priority.selectedIndex = {"low":0,"medium":1,"med":1,"high":2}[priority];
+    }
 }
 
 function update_task_description (name, desc) {
@@ -325,6 +360,42 @@ function update_subtask_added (path, task) {
     search.push(task);
 }
 
+function update_task_locked (path, value) {
+    let search = tasks;
+    let task = null;
+    let build_path = ["top"];
+    for (let i in path) {
+        build_path.push(path[i]);
+        if (i === path.length-1) {
+            task = search[task_index(search, path[i])];
+            break;
+        }
+        search = search[task_index(search, path[i])].subtasks
+    }
+    task.locked = value;
+    if (breadpath.join(",") === build_path.join(",")) {
+        seltsk_locked = value ? "/assets/icons/locked.svg" : "/assets/icons/unlocked.svg";
+    }
+}
+
+function update_subtask_name (path, name) {
+    let search = tasks;
+    let task = null;
+    let build_path = ["top"];
+    for (let i in path) {
+        build_path.push(path[i]);
+        if (i === path.length-1) {
+            task = search[task_index(search, path[i])];
+            break;
+        }
+        search = search[task_index(search, path[i])].subtasks
+    }
+    task.name = name;
+    if (breadpath.join(",") === build_path.join(",")) {
+        seltsk_name.value = name;
+    }
+}
+
 socket.on("update", (data) => {
     const upid = data.id;
     switch (upid) {
@@ -360,8 +431,28 @@ socket.on("update", (data) => {
         case 7:
             update_subtask_added(data.path, data.task)
             break;
+        // subtask renamed
+        case 8:
+            update_subtask_name(data.path, data.name);
+            break;
+        // subtask priority changed
+        case 9:
+            update_subtask_priority(data.path, data.priority);
+            break;
+        // any task locked status
+        case 10:
+            update_task_locked(data.path, data.value);
+            break;
     }
 });
+
+function change_subtask_priority (path, priority) {
+    socket.emit("task-pri", {"origin":origin, "path":path, "priority":priority})
+}
+
+function change_task_locked (path, value) {
+    socket.emit("task-lock", {"origin":origin, "path":path, "value":value});
+}
 
 function change_remove_sub (path) {
     socket.emit("remove-task", {"origin":origin, "path":path});
