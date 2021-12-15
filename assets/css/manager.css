@@ -130,20 +130,19 @@ body {
 #new-task-controls * {
     float: left;
     height: 32px;
+    background-color: #ddd;
+    border: none;    
 }
 #new-task-button {
-    background-color: #ddd;
     cursor: pointer;
 }
 #new-task-input {
     width: calc(15vw - 32px);
-    border: none;
-    background-color: #eee;
+    border-left: 2px solid black;
 }
 #new-task-priority {
     width: 5vw;
-    background-color: #ddd;
-    border: none;
+    border-left: 2px solid black;
     cursor: pointer;
 }
 
@@ -153,4 +152,27 @@ body {
     top : 0px;
     height : 100vh;
     overflow-y : scroll;
+}
+#new-task-button:hover, #new-task-input:hover, #new-task-priority:hover {
+    background-color: #eee;
+}
+
+#sel-task-name {
+    font-size: 50px;
+    border: none;
+    cursor: url("/assets/cursors/edit.svg") 0 32, auto;
+}
+#sel-task-desc {
+    font-size: 20px;    
+    border: none;
+    cursor: url("/assets/cursors/edit.svg") 0 32, auto;
+}
+input:focus {
+    outline: none;
+}
+#sel-priority-label {
+    font-size: 20px;
+}
+#sel-task-priority {
+    font-size: 20px;
 }

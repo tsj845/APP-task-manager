@@ -31,6 +31,13 @@
 			</div>
 			<div id="sel-task-info">
 				<input type="text" id="sel-task-name" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" onkeyup="if(event.code.toString()==='Enter'){if(current_task.name !== this.value){change_task_name(current_task.name,this.value)};this.blur()}"><br>
+				<label for="priority" id="sel-priority-label">Priority:</label>
+				<select name="priority" id="sel-task-priority">
+					<option value="low">Low</option>
+					<option value="medium">Medium</option>
+					<option value="high">High</option>
+				</select><br>
+				<input type="text" id="sel-task-desc" autocomplete="off">
 			</div>
 		</div>
 		<div id="menu" class="hidden">
