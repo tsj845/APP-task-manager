@@ -4,6 +4,8 @@ pname.size = pname.value.length;
 const panel = document.getElementById("side-panel");
 const ntsk_cover = document.getElementById("no-task");
 const seltsk_name = document.getElementById("sel-task-name");
+const seltsk_priority = document.getElementById("sel-task-priority");
+const seltsk_desc = document.getElementById("sel-task-desc");
 const tasklist = document.getElementById("task-list");
 const menu = document.getElementById("menu");
 let origin = pname.value;
@@ -15,6 +17,8 @@ function display_task (id, taskobj) {
     const elem = document.getElementById(id);
     ntsk_cover.className = "hidden";
     seltsk_name.value = taskobj.name;
+    seltsk_priority.value = taskobj.priority;
+    seltsk_desc.value = taskobj.desc;
 }
 
 function makeTask (data) {

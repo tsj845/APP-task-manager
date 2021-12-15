@@ -139,3 +139,26 @@ body {
     border-left: 2px solid black;
     cursor: pointer;
 }
+#new-task-button:hover, #new-task-input:hover, #new-task-priority:hover {
+    background-color: #eee;
+}
+
+#sel-task-name {
+    font-size: 50px;
+    border: none;
+    cursor: url("/assets/cursors/edit.svg") 0 32, auto;
+}
+#sel-task-desc {
+    font-size: 20px;    
+    border: none;
+    cursor: url("/assets/cursors/edit.svg") 0 32, auto;
+}
+input:focus {
+    outline: none;
+}
+#sel-priority-label {
+    font-size: 20px;
+}
+#sel-task-priority {
+    font-size: 20px;
+}
