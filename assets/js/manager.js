@@ -17,6 +17,14 @@ const seltsk_name = document.getElementById("sel-task-name");
 const seltsk_priority = document.getElementById("sel-task-priority");
 // selected task description (editable)
 const seltsk_desc = document.getElementById("sel-task-desc");
+// selected task labels
+const seltsk_labels = document.getElementById("sel-task-labels");
+// selected task subtasks
+const seltsk_subtasks = document.getElementById("sel-task-subtasks");
+// selected task locked
+const seltsk_locked = document.getElementById("sel-task-locked");
+// selected task completed
+const seltsk_completed = document.getElementById("sel-task-completed");
 // task list
 const tasklist = document.getElementById("task-list");
 // context menu
@@ -66,7 +74,7 @@ function update_bread_display () {
     breadlist.replaceChildren(breadlist.children[0]);
     let search = tasks;
     for (let i = 1; i < breadpath.length; i ++) {
-        const index = task_index(search, {name:breadpath[i]});
+        const index = task_index(search, breadpath[i]);
         const task = search[index];
         search = task.subtasks;
         add_breadcrumb(task, i);
@@ -86,44 +94,65 @@ function is_subtask (parent, child) {
 
 // gets the index of a task in a list
 function task_index (list, task) {
+    if (typeof task !== "string") {
+        task = task.name;
+    }
     for (let i in list) {
-        if (list[i].name == task.name) {
+        if (list[i].name == task) {
             return i;
         }
     }
     return -1;
 }
 
+// updates the subtask display
+function update_subtask_display () {
+    seltsk_subtasks.replaceChildren();
+    for (let i in current_task.subtasks) {
+        const task = current_task.subtasks[i];
+        const inp = document.createElement("input");
+        inp.type = "button";
+        inp.id = "subtaskdisplay-"+task.name;
+        inp.value = task.name + " " + task.priority;
+        inp.onclick = (e) => {
+            const value = inp.id.split("-").slice(1).join("-");
+            display_task(value);
+        }
+        seltsk_subtasks.appendChild(inp);
+    }
+}
+
 // displays a task
-function display_task (id, taskobj, light) {
+function display_task (taskobj, light) {
+    if (typeof taskobj === "string") {
+        taskobj = current_task ? current_task.subtasks[task_index(current_task.subtasks, taskob)] : tasks[task_index(tasks, taskobj)];
+    }
     // when light is set don't do anything with breadcrumbs
     if (!light) {
         if (current_task && is_subtask(current_task, taskobj)) {
             breadpath.push(taskobj.name);
-            // breadpath.push(task_index(current_task.subtasks, taskobj));
         } else {
             breadpath = ["top", taskobj.name];
-            // breadpath = ["top", task_index(tasks, taskobj)];
         }
         update_bread_display();
     }
     current_task = taskobj;
-    // const elem = document.getElementById(id);
     seltsk_info.style.display = "block";
     ntsk_cover.style.display = "none";
     seltsk_name.value = taskobj.name;
     seltsk_priority.value = taskobj.priority;
     seltsk_desc.value = taskobj.desc;
+    update_subtask_display();
 }
 
 function display_task_b (depth) {
     let search = tasks;
     let task = null
-    for (let i = 1; i < depth; i ++) {
-        task = search[task_index(search, {name:breadpath[i]})];
+    for (let i = 1; i < depth+1; i ++) {
+        task = search[task_index(search, breadpath[i])];
         search = task.subtasks;
     }
-    display_task("task-"+task.name, task, true);
+    display_task(task, true);
 }
 
 // displays the edit project panel
@@ -174,7 +203,7 @@ function makeTask (data) {
     cont.appendChild(locked);
     tasklist.appendChild(cont);
     cont.onclick = () => {
-        display_task(cont.id, data);
+        display_task(data);
     };
 }
 
@@ -206,7 +235,11 @@ socket.on("boot-res", (data) => {
 });
 
 function update_task_name (name, newname) {
-    const task = document.getElementById("task-"+name);
+    if (task_index(tasks, name) > -1) {
+        const task = document.getElementById("task-"+name);
+        task.id = "task-"+newname;
+        task.children[0].children[0].textContent = newname;
+    }
     for (let i in tasks) {
         let task = tasks[i];
         if (task.name === name) {
@@ -217,12 +250,13 @@ function update_task_name (name, newname) {
             break;
         }
     }
-    task.id = "task-"+newname;
-    task.children[0].children[0].textContent = newname;
 }
 
 function update_task_priority (name, priority) {
-    const task = document.getElementById("task-"+name);
+    if (task_index(tasks, name) > -1) {
+        const task = document.getElementById("task-"+name);
+        task.children[1].children[0].textContent = priority;
+    }
     for (let i in tasks) {
         let task = tasks[i];
         if (task.name === name) {
@@ -233,11 +267,9 @@ function update_task_priority (name, priority) {
             break;
         }
     }
-    task.children[1].children[0].textContent = priority;
 }
 
 function update_task_description (name, desc) {
-    // const task = document.getElementById("task-"+name);
     for (let i in tasks) {
         let task = tasks[i];
         if (task.name === name) {
@@ -248,10 +280,12 @@ function update_task_description (name, desc) {
             break;
         }
     }
-    // task.children[1].children[0].textContent = priority;
 }
 
 function update_task_removed (name) {
+    if (task_index(tasks, name) > -1) {
+        tasklist.removeChild(document.getElementById("task-"+name));
+    }
     for (let i in tasks) {
         let task = tasks[i];
         if (task.name === name) {
@@ -262,21 +296,20 @@ function update_task_removed (name) {
             break;
         }
     }
-    tasklist.removeChild(document.getElementById("task-"+name));
 }
 
 function update_task_added (task) {
     tasks.push(task);
     makeTask(task);
-    display_task("task-"+task.name, task);
+    display_task(task);
 }
 
-function update_subtask_remove (path) {
+function update_subtask_removed (path) {
     let search = tasks;
     for (let i = 0; i < path.length-1; i ++) {
-        search = search[task_index(search, {name:path[i]})].subtasks;
+        search = search[task_index(search, path[i])].subtasks;
     }
-    const index = task_index(search, {name:path[path.length-1]});
+    const index = task_index(search, path[path.length-1]);
     let bread_req = false;
     if (current_task && search[index].name === current_task.name) {
         bread_req = true;
@@ -287,7 +320,7 @@ function update_subtask_remove (path) {
 function update_subtask_added (path, task) {
     let search = tasks;
     for (let i in path) {
-        search = search[task_index(search, {name:path[i]})].subtasks;
+        search = search[task_index(search, path[i])].subtasks;
     }
     search.push(task);
 }
@@ -321,7 +354,7 @@ socket.on("update", (data) => {
             break;
         // subtask deleted
         case 6:
-            update_subtask_remove(data.path);
+            update_subtask_removed(data.path);
             break;
         // subtask added
         case 7:

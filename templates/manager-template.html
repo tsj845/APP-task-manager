@@ -35,13 +35,21 @@
 					<option value="medium">Medium</option>
 					<option value="high">High</option>
 				</select><br>
-				<!--type="text"-->
 				<textarea id="sel-task-desc" autocomplete="off" onblur="if(current_task && this.value !== current_task.desc){change_task_description(current_task.name, this.value)}" onkeyupx="if(current_task && event.code.toString() === 'Enter' && this.value !== current_task.desc){change_task_description(current_task.name, this.value)}"></textarea>
+				<div id="sel-task-labels">
+					coming eventually
+				</div>
+				<div id="sel-task-subtasks"></div>
+				<label for="locked">Locked Status:</label>
+				<input type="image" id="sel-task-locked" name="locked" src="/assets/cursors/edit.svg">
+				<br>
+				<label for="completed">Completed:</label>
+				<input type="checkbox" id="sel-task-completed" name="completed">
 			</div>
 		</div>
 		<div id="menu" class="hidden">
-			<input type="button" value="rename project" onclick="document.getElementById('proj-name').select()"><br>
-			<input type="button" value="new task" onclick="newtask()">
+			<input type="button" value="rename project" onclick="edit_project()"><br>
+			<input type="button" value="new task" onclick="document.getElementById('new-task-input').select()">
 		</div>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
 		<script src="/assets/js/manager.js"></script>

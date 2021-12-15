@@ -1,3 +1,4 @@
+from os import name
 from flask import Flask
 from flask import render_template as render
 import flask_socketio
@@ -19,7 +20,12 @@ project1tasks = [
 	{"name":"task2", "priority":"high", "desc":"a testing task", "labels":[], "subtasks":[], "locked":False, "completed":False}
 ]
 
-projects = {"project1":project1tasks}
+testservertasks = [
+	{"name":"test1", "priority":"low", "desc":"subtask testing", "labels":[], "subtasks":[{"name":"subtask1", "priority":"low", "desc":"subtask testing", "labels":[], "subtasks":[], "locked":False, "completed":False}], "locked":False, "completed":False},
+	{"name":"general", "priority":"high", "desc":"general testing", "labels":[], "subtasks":[], "locked":False, "completed":False}
+]
+
+projects = {"project1":project1tasks, "xyz":testservertasks}
 
 
 # helper function to get index of task in a list
@@ -142,19 +148,27 @@ def rename_proj (data):
 def rename_task (data):
 	print(f"task rename by {flask_socketio.flask.request.sid}")
 	origin = data["origin"]
-	oldname = data["name"]
 	newname = data["newname"]
 	proj = projects[origin]
-	index = -1
-	for i in range(len(proj)):
-		if (proj[i]["name"] == oldname):
-			index = i
-			break
-	if (index < 0):
-		return
-	proj[i]["name"] = newname
-	projects[origin] = proj
-	data["id"] = 1
+	if ("name" in data.keys()):
+		index = task_index(proj, data["name"])
+		if (index < 0):
+			return
+		proj[index]["name"] = newname
+		projects[origin] = proj
+		data["id"] = 1
+	else:
+		data["id"] = 8
+		path = data["path"]
+		search = proj
+		for i in range(len(path)-1):
+			step = path[i]
+			index = task_index(search, step)
+			if (index < 0):
+				return
+			search = search[index]["subtasks"]
+		index = task_index(search, path[-1])
+		search[index]["name"] = newname
 	emit("update", data, to=origin)
 
 @socketio.on("task-pri")
