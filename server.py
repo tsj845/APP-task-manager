@@ -1,3 +1,17 @@
+import socket
+import sys
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+try:
+	s.connect(("10.255.255.255", 1))
+	ip = s.getsockname()[0]
+except Exception:
+	ip = "127.0.0.1"
+finally:
+	s.close()
+if (len(sys.argv) > 1):
+	ip = ip if sys.argv[1] == "prod" else "127.0.0.1"
+else:
+	ip = "127.0.0.1"
 from os import name
 from flask import Flask
 from flask import render_template as render
@@ -207,35 +221,6 @@ def task_desc (data):
 	data["id"] = 5
 	emit("update", data, to=origin)
 
-# @socketio.on("remove-task")
-# def remove_task (data):
-# 	print(f"task removal by {flask_socketio.flask.request.sid}")
-# 	origin = data["origin"]
-# 	name = data["name"]
-# 	proj = projects[origin]
-# 	found = True
-# 	for i in range(len(proj)):
-# 		if (proj[i]["name"] == name):
-# 			found = False
-# 			proj.pop(i)
-# 			break
-# 	if (found):
-# 		return
-# 	data["id"] = 2
-# 	emit("update", data, to=origin)
-
-# @socketio.on("add-task")
-# def add_task (data):
-# 	print(f"task addition by {flask_socketio.flask.request.sid}")
-# 	origin = data["origin"]
-# 	task = data["task"]
-# 	proj = projects[origin]
-# 	if (task_index(proj, task["name"]) != -1):
-# 		return
-# 	proj.append(task)
-# 	data["id"] = 3
-# 	emit("update", data, to=origin)
-
 @socketio.on("leav-proj")
 def leave_project ():
 	# id = flask_socketio.flask.request.sid
@@ -243,4 +228,4 @@ def leave_project ():
 	flask_socketio.leave_room(rooms[1])
 
 # server
-socketio.run(server, host="127.0.0.1", port="3000", debug=True)
+socketio.run(server, host=ip, port="3000", debug=True)
