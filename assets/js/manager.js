@@ -17,7 +17,20 @@ let current_task = null;
 
 let booted = false;
 
+function is_subtask (parent, child) {
+    for (let i in parent.subtasks) {
+        const test = parent.subtasks[i];
+        if (test.name === child.name) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function display_task (id, taskobj) {
+    if (current_task && is_subtask(current_task, taskobj)) {
+        throw "not implemented yet";
+    }
     current_task = taskobj;
     const elem = document.getElementById(id);
     seltsk_info.style.display = "block";
