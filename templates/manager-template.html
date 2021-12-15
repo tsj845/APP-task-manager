@@ -36,9 +36,13 @@
 					<option value="high">High</option>
 				</select><br>
 				<textarea id="sel-task-desc" autocomplete="off" onblur="if(current_task && this.value !== current_task.desc){change_task_description(current_task.name, this.value)}" onkeyupx="if(current_task && event.code.toString() === 'Enter' && this.value !== current_task.desc){change_task_description(current_task.name, this.value)}"></textarea>
+				<br>
+				<span>Labels:</span>
 				<div id="sel-task-labels">
 					coming eventually
 				</div>
+				<br>
+				<span>Subtasks:</span>
 				<div id="sel-task-subtasks"></div>
 				<label for="locked">Locked Status:</label>
 				<input type="image" id="sel-task-locked" name="locked" src="/assets/cursors/edit.svg">
