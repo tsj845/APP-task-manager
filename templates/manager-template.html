@@ -37,7 +37,8 @@
 					<option value="medium">Medium</option>
 					<option value="high">High</option>
 				</select><br>
-				<input type="text" id="sel-task-desc" autocomplete="off" onkeyup="if(current_task && event.code.toString() === 'Enter' && this.value !== current_task.desc){change_task_description(current_task.name, this.value)}">
+				<!--type="text"-->
+				<textarea id="sel-task-desc" autocomplete="off" onblur="if(current_task && this.value !== current_task.desc){change_task_description(current_task.name, this.value)}" onkeyupx="if(current_task && event.code.toString() === 'Enter' && this.value !== current_task.desc){change_task_description(current_task.name, this.value)}"></textarea>
 			</div>
 		</div>
 		<div id="menu" class="hidden">
