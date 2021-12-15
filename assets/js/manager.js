@@ -53,7 +53,7 @@ function breadcrumbclick (depth) {
 // adds a breadcrumb
 function add_breadcrumb (task, depth) {
     const crumb = document.createElement("span");
-    crumb.className = "bread-crumb";
+    crumb.className = "task-breadcrumb";
     crumb.textContent = task.name;
     crumb.onclick = (e) => {
         breadcrumbclick(depth);

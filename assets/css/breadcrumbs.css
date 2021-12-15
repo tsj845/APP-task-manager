@@ -15,15 +15,16 @@
     height : 4em;
     border-right : 2px solid black;
     border-bottom: 2px solid black;
+    background-color : #eee;
 }
 
 .task-breadcrumb:hover {
-    background-color: #eee;
+    background-color: #ddd;
 }
 
 .task-breadcrumb.top-breadcrumb {
-    background-color: #ddd;
+    background-color: #ccc;
 }
 .task-breadcrumb.top-breadcrumb:hover {
-    background-color: #eee;
+    background-color: #bbb;
 }
