@@ -66,7 +66,7 @@ function update_bread_display () {
     breadlist.replaceChildren(breadlist.children[0]);
     let search = tasks;
     for (let i = 1; i < breadpath.length; i ++) {
-        const index = breadpath[i];
+        const index = task_index(search, {name:breadpath[i]});
         const task = search[index];
         search = task.subtasks;
         add_breadcrumb(task, i);
@@ -99,9 +99,11 @@ function display_task (id, taskobj, light) {
     // when light is set don't do anything with breadcrumbs
     if (!light) {
         if (current_task && is_subtask(current_task, taskobj)) {
-            breadpath.push(task_index(current_task.subtasks, taskobj));
+            breadpath.push(taskobj.name);
+            // breadpath.push(task_index(current_task.subtasks, taskobj));
         } else {
-            breadpath = ["top", task_index(tasks, taskobj)];
+            breadpath = ["top", taskobj.name];
+            // breadpath = ["top", task_index(tasks, taskobj)];
         }
         update_bread_display();
     }
@@ -118,7 +120,7 @@ function display_task_b (depth) {
     let search = tasks;
     let task = null
     for (let i = 1; i < depth; i ++) {
-        task = search[breadpath[i]];
+        task = search[task_index(search, {name:breadpath[i]})];
         search = task.subtasks;
     }
     display_task("task-"+task.name, task, true);
@@ -269,6 +271,27 @@ function update_task_added (task) {
     display_task("task-"+task.name, task);
 }
 
+function update_subtask_remove (path) {
+    let search = tasks;
+    for (let i = 0; i < path.length-1; i ++) {
+        search = search[task_index(search, {name:path[i]})].subtasks;
+    }
+    const index = task_index(search, {name:path[path.length-1]});
+    let bread_req = false;
+    if (current_task && search[index].name === current_task.name) {
+        bread_req = true;
+    }
+    search.splice(index, 1);
+}
+
+function update_subtask_added (path, task) {
+    let search = tasks;
+    for (let i in path) {
+        search = search[task_index(search, {name:path[i]})].subtasks;
+    }
+    search.push(task);
+}
+
 socket.on("update", (data) => {
     const upid = data.id;
     switch (upid) {
@@ -296,8 +319,20 @@ socket.on("update", (data) => {
         case 5:
             update_task_description(data.name, data.desc);
             break;
+        // subtask deleted
+        case 6:
+            update_subtask_remove(data.path);
+            break;
+        // subtask added
+        case 7:
+            update_subtask_added(data.path, data.task)
+            break;
     }
 });
+
+function change_remove_sub (path) {
+    socket.emit("remove-subtask", {"origin":origin, "path":path});
+}
 
 function change_project_name (newname) {
     socket.emit("rename-proj", {"origin":origin, "name":newname});

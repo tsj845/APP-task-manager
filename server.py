@@ -21,6 +21,16 @@ project1tasks = [
 
 projects = {"project1":project1tasks}
 
+
+# helper function to get index of task in a list
+def task_index (search, task):
+	if (type(task) == dict):
+		task = task["name"]
+	for i in range(len(search)):
+		if (search[i]["name"] == task):
+			return i
+	return -1
+
 @server.endpoint("index")
 def projectsf ():
 	return render("projects-template.html", projects=projects)
@@ -77,6 +87,36 @@ def boot_client (data):
 	print(dir(flask_socketio.flask.request), "request")
 	print(flask_socketio.flask.request.sid)
 	emit("boot-res", {"tasks":projects[data["project"]]})
+
+@socketio.on("remove-subtask")
+def remove_subtask (data):
+	origin = data["origin"]
+	search = projects[origin]
+	path = data["path"]
+	for i in range(len(path)-1):
+		step = path[i]
+		index = task_index(search, step)
+		task = search[index]
+		search = task["subtasks"]
+	search.pop(task_index(search, path[-1]))
+	print(projects[origin])
+	data["id"] = 6
+	emit("update", data, to=origin)
+
+@socketio.on("add-subtask")
+def add_subtask (data):
+	origin = data["origin"]
+	search = projects[origin]
+	task = data["task"]
+	path = data["path"]
+	for i in range(len(path)):
+		step = path[i]
+		index = task_index(search, step)
+		search = search[index]["subtasks"]
+	search.append(task)
+	print(projects[origin])
+	data["id"] = 7
+	emit("update", data, to=origin)
 
 @socketio.on("rename-proj")
 def rename_proj (data):
