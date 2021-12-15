@@ -1,14 +1,16 @@
 let socket = io();
 const pname = document.getElementById("proj-name");
-pname.size = pname.value.length;
+pname.size = pname.textContent.length;
 const panel = document.getElementById("side-panel");
-// const ntsk_cover = document.getElementById("no-task");
+const ntsk_cover = document.getElementById("edit-project");
+const selprj_name = document.getElementById("sel-project-name");
+const seltsk_info = document.getElementById("sel-task-info");
 const seltsk_name = document.getElementById("sel-task-name");
 const seltsk_priority = document.getElementById("sel-task-priority");
 const seltsk_desc = document.getElementById("sel-task-desc");
 const tasklist = document.getElementById("task-list");
 const menu = document.getElementById("menu");
-let origin = pname.value;
+let origin = pname.textContent;
 let tasks = null;
 
 let current_task = null;
@@ -18,10 +20,16 @@ let booted = false;
 function display_task (id, taskobj) {
     current_task = taskobj;
     const elem = document.getElementById(id);
-    // ntsk_cover.className = "hidden";
+    seltsk_info.style.display = "block";
+    ntsk_cover.style.display = "none";
     seltsk_name.value = taskobj.name;
     seltsk_priority.value = taskobj.priority;
     seltsk_desc.value = taskobj.desc;
+}
+function edit_project () {
+    seltsk_info.style.display = "none";
+    ntsk_cover.style.display = "block";
+    selprj_name.value = origin;
 }
 
 function makeTask (data) {
@@ -66,6 +74,7 @@ function bootrender () {
         const task = tasks[i];
         makeTask(task);
     }
+    selprj_name.value = origin;
 }
 
 socket.emit("boot", {project:origin});
