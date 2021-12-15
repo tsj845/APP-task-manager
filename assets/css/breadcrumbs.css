@@ -5,28 +5,24 @@
 
 #breadcrumbs {
     position : relative;
-    top : 0px;
+    top : -1px;
     left : 0px;
 }
 
 .task-breadcrumb {
     cursor : hand;
     height : 4em;
-    border : solid lime;
-    background-color : #808080;
-    transition : background-color linear 0.25s;
-    border-radius : 15%;
-    background-clip : border-box;
+    border-right : 2px solid black;
+    border-bottom: 2px solid black;
 }
 
 .task-breadcrumb:hover {
-    background-color : #787878;
+    background-color: #eee;
 }
 
 .task-breadcrumb.top-breadcrumb {
-    background-color : #707070;
+    background-color: #ddd;
 }
-
 .task-breadcrumb.top-breadcrumb:hover {
-    background-color : #686868;
+    background-color: #eee;
 }
