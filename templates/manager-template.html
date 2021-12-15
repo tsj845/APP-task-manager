@@ -22,7 +22,7 @@
 		</div>
 		<div id="side-panel">
 			<div id="breadcrumbs">
-				<span class="task-breadcrumb top-breadcrumb">{{ project_name }}</span>
+				<span class="task-breadcrumb top-breadcrumb" onclick="breadcrumbclick(0)">{{ project_name }}</span>
 			</div>
 			<div id="edit-project">
 				<input type="text" id="sel-project-name" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" onkeyup="if(event.code.toString()==='Enter'){if(pname !== this.value){change_project_name(this.value)}}">

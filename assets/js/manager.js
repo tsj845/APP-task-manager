@@ -1,22 +1,79 @@
+// websocket for real time communication
 let socket = io();
+// project name
 const pname = document.getElementById("proj-name");
 pname.size = pname.textContent.length;
+// side panel (right)
 const panel = document.getElementById("side-panel");
+// no task cover
 const ntsk_cover = document.getElementById("edit-project");
+// editable name for project
 const selprj_name = document.getElementById("sel-project-name");
+// selected task info
 const seltsk_info = document.getElementById("sel-task-info");
+// selected task name (editable)
 const seltsk_name = document.getElementById("sel-task-name");
+// selected task priority (editable)
 const seltsk_priority = document.getElementById("sel-task-priority");
+// selected task description (editable)
 const seltsk_desc = document.getElementById("sel-task-desc");
+// task list
 const tasklist = document.getElementById("task-list");
+// context menu
 const menu = document.getElementById("menu");
+// breadcrumbs
+const breadlist = document.getElementById("breadcrumbs");
+// origin project (project name) used for websocket communication
 let origin = pname.textContent;
+// tasks
 let tasks = null;
 
+// selected task
 let current_task = null;
 
+// breadcrumb path
+let breadpath = ["top"];
+
+// if the page setup is done
 let booted = false;
 
+// handles a click on a breadcrumb
+function breadcrumbclick (depth) {
+    if (depth === 0) {
+        edit_project();
+        return;
+    }
+    if (breadpath.length > depth+1) {
+        breadpath.splice(depth+1);
+        update_bread_display();
+        display_task_b(depth);
+    }
+}
+
+// adds a breadcrumb
+function add_breadcrumb (task, depth) {
+    const crumb = document.createElement("span");
+    crumb.className = "bread-crumb";
+    crumb.textContent = task.name;
+    crumb.onclick = (e) => {
+        breadcrumbclick(depth);
+    };
+    breadlist.appendChild(crumb);
+}
+
+// updates the breadcrumbs
+function update_bread_display () {
+    breadlist.replaceChildren(breadlist.children[0]);
+    let search = tasks;
+    for (let i = 1; i < breadpath.length; i ++) {
+        const index = breadpath[i];
+        const task = search[index];
+        search = task.subtasks;
+        add_breadcrumb(task, i);
+    }
+}
+
+// checks if a task is a subtask
 function is_subtask (parent, child) {
     for (let i in parent.subtasks) {
         const test = parent.subtasks[i];
@@ -27,24 +84,64 @@ function is_subtask (parent, child) {
     return false;
 }
 
-function display_task (id, taskobj) {
-    if (current_task && is_subtask(current_task, taskobj)) {
-        throw "not implemented yet";
+// gets the index of a task in a list
+function task_index (list, task) {
+    for (let i in list) {
+        if (list[i].name == task.name) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+// displays a task
+function display_task (id, taskobj, light) {
+    // when light is set don't do anything with breadcrumbs
+    if (!light) {
+        if (current_task && is_subtask(current_task, taskobj)) {
+            breadpath.push(task_index(current_task.subtasks, taskobj));
+        } else {
+            breadpath = ["top", task_index(tasks, taskobj)];
+        }
+        update_bread_display();
     }
     current_task = taskobj;
-    const elem = document.getElementById(id);
+    // const elem = document.getElementById(id);
     seltsk_info.style.display = "block";
     ntsk_cover.style.display = "none";
     seltsk_name.value = taskobj.name;
     seltsk_priority.value = taskobj.priority;
     seltsk_desc.value = taskobj.desc;
 }
+
+function display_task_b (depth) {
+    let search = tasks;
+    let task = null
+    for (let i = 1; i < depth; i ++) {
+        task = search[breadpath[i]];
+        search = task.subtasks;
+    }
+    display_task("task-"+task.name, task, true);
+}
+
+// displays the edit project panel
 function edit_project () {
+    // if the breadcrumb display needs to be updated
+    let update_req = false;
+    if (breadpath.length > 1) {
+        update_req = true;
+    }
+    breadpath = ["top"];
+    if (update_req) {
+        update_bread_display();
+    }
+    current_task = null;
     seltsk_info.style.display = "none";
     ntsk_cover.style.display = "block";
     selprj_name.value = origin;
 }
 
+// creates a new task
 function makeTask (data) {
     const cont = document.createElement("div");
     cont.className = "task";
@@ -79,6 +176,7 @@ function makeTask (data) {
     };
 }
 
+// does initial rendering of the tasks
 function bootrender () {
     if (!booted) {
         return;
@@ -90,9 +188,12 @@ function bootrender () {
     selprj_name.value = origin;
 }
 
+// requests the tasks for the project
 socket.emit("boot", {project:origin});
 
+// boot response
 socket.on("boot-res", (data) => {
+    // double boot
     if (booted) {
         window.location.pathname = "/err/1";
     } else {
@@ -153,7 +254,7 @@ function update_task_removed (name) {
         let task = tasks[i];
         if (task.name === name) {
             if (current_task && task.name === current_task.name) {
-                current_task = null;
+                edit_project();
             }
             tasks.splice(i, 1);
             break;
@@ -223,8 +324,10 @@ function change_task_add (task_name, priority) {
     socket.emit("add-task", {"task":{"name": task_name, "priority": priority, "desc": "new task", "labels": [], "subtasks":[], "locked": false, "completed": false}, "origin":origin});
 }
 
+// if the meta key is pressed (used to disable custom context menu)
 let command = false;
 
+// key down
 document.addEventListener("keydown", (e) => {
     const key = e.code.toString();
     if (key === "MetaLeft" || key === "MetaRight") {
@@ -232,6 +335,7 @@ document.addEventListener("keydown", (e) => {
     }
 });
 
+// key up
 document.addEventListener("keyup", (e) => {
     const key = e.code.toString();
     if (key === "MetaLeft" || key === "MetaRight") {
@@ -239,10 +343,12 @@ document.addEventListener("keyup", (e) => {
     }
 });
 
+// user click hides context menu
 document.addEventListener("click", (e) => {
     menu.className = "hidden";
 });
 
+// shows custom context menu if meta key is not pressed
 document.addEventListener("contextmenu", (e) => {
     if (!command) {
         menu.className = "";
