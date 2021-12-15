@@ -331,7 +331,7 @@ socket.on("update", (data) => {
 });
 
 function change_remove_sub (path) {
-    socket.emit("remove-subtask", {"origin":origin, "path":path});
+    socket.emit("remove-task", {"origin":origin, "path":path});
 }
 
 function change_project_name (newname) {

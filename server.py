@@ -88,36 +88,43 @@ def boot_client (data):
 	print(flask_socketio.flask.request.sid)
 	emit("boot-res", {"tasks":projects[data["project"]]})
 
-@socketio.on("remove-subtask")
+@socketio.on("remove-task")
 def remove_subtask (data):
 	origin = data["origin"]
 	search = projects[origin]
-	path = data["path"]
-	for i in range(len(path)-1):
-		step = path[i]
-		index = task_index(search, step)
-		task = search[index]
-		search = task["subtasks"]
-	search.pop(task_index(search, path[-1]))
+	data["id"] = 2
+	if ("path" in data.keys()):
+		data["id"] = 6
+		path = data["path"]
+		for i in range(len(path)-1):
+			step = path[i]
+			index = task_index(search, step)
+			task = search[index]
+			search = task["subtasks"]
+		name = path[-1]
+	else:
+		name = data["name"]
+	search.pop(task_index(search, name))
 	print(projects[origin])
-	data["id"] = 6
 	emit("update", data, to=origin)
 
-@socketio.on("add-subtask")
+@socketio.on("add-task")
 def add_subtask (data):
 	origin = data["origin"]
 	search = projects[origin]
 	task = data["task"]
-	path = data["path"]
-	for i in range(len(path)):
-		step = path[i]
-		index = task_index(search, step)
-		search = search[index]["subtasks"]
+	data["id"] = 3
+	if ("path" in data.keys()):
+		data["id"] = 7
+		path = data["path"]
+		for i in range(len(path)):
+			step = path[i]
+			index = task_index(search, step)
+			search = search[index]["subtasks"]
 	if (task_index(search, task["name"]) != -1):
 		return
 	search.append(task)
 	print(projects[origin])
-	data["id"] = 7
 	emit("update", data, to=origin)
 
 @socketio.on("rename-proj")
@@ -186,34 +193,34 @@ def task_desc (data):
 	data["id"] = 5
 	emit("update", data, to=origin)
 
-@socketio.on("remove-task")
-def remove_task (data):
-	print(f"task removal by {flask_socketio.flask.request.sid}")
-	origin = data["origin"]
-	name = data["name"]
-	proj = projects[origin]
-	found = True
-	for i in range(len(proj)):
-		if (proj[i]["name"] == name):
-			found = False
-			proj.pop(i)
-			break
-	if (found):
-		return
-	data["id"] = 2
-	emit("update", data, to=origin)
+# @socketio.on("remove-task")
+# def remove_task (data):
+# 	print(f"task removal by {flask_socketio.flask.request.sid}")
+# 	origin = data["origin"]
+# 	name = data["name"]
+# 	proj = projects[origin]
+# 	found = True
+# 	for i in range(len(proj)):
+# 		if (proj[i]["name"] == name):
+# 			found = False
+# 			proj.pop(i)
+# 			break
+# 	if (found):
+# 		return
+# 	data["id"] = 2
+# 	emit("update", data, to=origin)
 
-@socketio.on("add-task")
-def add_task (data):
-	print(f"task addition by {flask_socketio.flask.request.sid}")
-	origin = data["origin"]
-	task = data["task"]
-	proj = projects[origin]
-	if (task_index(proj, task["name"]) != -1):
-		return
-	proj.append(task)
-	data["id"] = 3
-	emit("update", data, to=origin)
+# @socketio.on("add-task")
+# def add_task (data):
+# 	print(f"task addition by {flask_socketio.flask.request.sid}")
+# 	origin = data["origin"]
+# 	task = data["task"]
+# 	proj = projects[origin]
+# 	if (task_index(proj, task["name"]) != -1):
+# 		return
+# 	proj.append(task)
+# 	data["id"] = 3
+# 	emit("update", data, to=origin)
 
 @socketio.on("leav-proj")
 def leave_project ():
