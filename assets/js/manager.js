@@ -197,6 +197,7 @@ function change_task_remove (task) {
 }
 
 function change_task_add (task_name, priority) {
+    console.log(priority);
     socket.emit("add-task", {"task":{"name": task_name, "priority": priority, "desc": "new task", "labels": [], "subtasks":[], "locked": false, "completed": false}, "origin":origin});
 }
 

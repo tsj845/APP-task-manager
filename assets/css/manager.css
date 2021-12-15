@@ -174,5 +174,6 @@ input:focus {
     font-size: 20px;
 }
 #sel-task-priority {
-    font-size: 20px;
+    outline : none;
+    /* font-size: 20px; */
 }
