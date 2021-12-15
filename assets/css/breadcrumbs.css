@@ -1,0 +1,32 @@
+/* pushes the task info down slightly so that there is some space between it and the breadcrumbs */
+#sel-task-info {
+    padding-top : 5px;
+}
+
+#breadcrumbs {
+    position : relative;
+    top : 0px;
+    left : 0px;
+}
+
+.task-breadcrumb {
+    cursor : hand;
+    height : 4em;
+    border : solid lime;
+    background-color : #808080;
+    transition : background-color linear 0.25s;
+    border-radius : 15%;
+    background-clip : border-box;
+}
+
+.task-breadcrumb:hover {
+    background-color : #787878;
+}
+
+.task-breadcrumb.top-breadcrumb {
+    background-color : #707070;
+}
+
+.task-breadcrumb.top-breadcrumb:hover {
+    background-color : #686868;
+}

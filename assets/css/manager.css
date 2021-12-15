@@ -1,7 +1,13 @@
+/* sets all text input to have a gray outline unless otherwise specified */
+input[type="text"]:not(.default) {
+    outline-color : gray;
+}
+
 .task, .pri-label, #indent > ul {
     margin : 0px;
 }
 body {
+    overflow-y : hidden;
     margin: 0px;
 }
 #task-list {
@@ -32,7 +38,7 @@ body {
 
 #side-panel {
     position : absolute;
-    left : 20vw;
+    left : calc(20vw - 2px);
     top: 0px;
     border-left : solid black 2px;
     width : 80vw;
@@ -139,4 +145,12 @@ body {
     background-color: #ddd;
     border: none;
     cursor: pointer;
+}
+
+#left-panel {
+    position : relative;
+    left : 0px;
+    top : 0px;
+    height : 100vh;
+    overflow-y : scroll;
 }

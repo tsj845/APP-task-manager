@@ -2,18 +2,21 @@ let socket = io();
 const pname = document.getElementById("proj-name");
 pname.size = pname.value.length;
 const panel = document.getElementById("side-panel");
-const ntsk_cover = document.getElementById("no-task");
+// const ntsk_cover = document.getElementById("no-task");
 const seltsk_name = document.getElementById("sel-task-name");
 const tasklist = document.getElementById("task-list");
 const menu = document.getElementById("menu");
 let origin = pname.value;
 let tasks = null;
 
+let current_task = null;
+
 let booted = false;
 
 function display_task (id, taskobj) {
+    current_task = taskobj;
     const elem = document.getElementById(id);
-    ntsk_cover.className = "hidden";
+    // ntsk_cover.className = "hidden";
     seltsk_name.value = taskobj.name;
 }
 
@@ -79,6 +82,9 @@ function update_task_name (name, newname) {
         let task = tasks[i];
         if (task.name === name) {
             task.name = newname;
+            if (current_task) {
+                current_task.name = newname;
+            }
             break;
         }
     }
@@ -92,6 +98,9 @@ function update_task_priority (name, priority) {
         let task = tasks[i];
         if (task.name === name) {
             task.priority = priority;
+            if (current_task) {
+                current_task.priority = priority;
+            }
             break;
         }
     }
@@ -104,6 +113,9 @@ function update_task_description (name, desc) {
         let task = tasks[i];
         if (task.name === name) {
             task.desc = desc;
+            if (current_task) {
+                current_task.desc = desc;
+            }
             break;
         }
     }
@@ -114,6 +126,9 @@ function update_task_removed (name) {
     for (let i in tasks) {
         let task = tasks[i];
         if (task.name === name) {
+            if (current_task && task.name === current_task.name) {
+                current_task = null;
+            }
             tasks.splice(i, 1);
             break;
         }
@@ -124,6 +139,7 @@ function update_task_removed (name) {
 function update_task_added (task) {
     tasks.push(task);
     makeTask(task);
+    display_task("task-"+task.name, task);
 }
 
 socket.on("update", (data) => {

@@ -80,6 +80,7 @@ def boot_client (data):
 
 @socketio.on("rename-proj")
 def rename_proj (data):
+	print(f"project rename by {flask_socketio.flask.request.sid}")
 	origin = data["origin"]
 	name = data["name"]
 	proj = projects[origin]
@@ -90,6 +91,7 @@ def rename_proj (data):
 
 @socketio.on("rename-task")
 def rename_task (data):
+	print(f"task rename by {flask_socketio.flask.request.sid}")
 	origin = data["origin"]
 	oldname = data["name"]
 	newname = data["newname"]
@@ -108,6 +110,7 @@ def rename_task (data):
 
 @socketio.on("task-pri")
 def task_pri (data):
+	print(f"task priority change by {flask_socketio.flask.request.sid}")
 	origin = data["origin"]
 	name = data["name"]
 	priority = data["priority"]
@@ -125,6 +128,7 @@ def task_pri (data):
 
 @socketio.on("task-desc")
 def task_desc (data):
+	print(f"task description change by {flask_socketio.flask.request.sid}")
 	origin = data["origin"]
 	name = data["name"]
 	desc = data["desc"]
@@ -142,6 +146,7 @@ def task_desc (data):
 
 @socketio.on("remove-task")
 def remove_task (data):
+	print(f"task removal by {flask_socketio.flask.request.sid}")
 	origin = data["origin"]
 	name = data["name"]
 	proj = projects[origin]
@@ -158,6 +163,7 @@ def remove_task (data):
 
 @socketio.on("add-task")
 def add_task (data):
+	print(f"task addition by {flask_socketio.flask.request.sid}")
 	origin = data["origin"]
 	task = data["task"]
 	proj = projects[origin]

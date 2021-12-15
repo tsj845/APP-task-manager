@@ -1,6 +1,7 @@
 <html>
 	<head>
 		<link rel="stylesheet" type="text/css" href="/assets/css/manager.css" />
+		<link rel="stylesheet" type="text/css" href="/assets/css/breadcrumbs.css" />
 	</head>
 	<body>
 		<img src="/assets/icons/rename.svg">
@@ -11,7 +12,7 @@
 			<div id="task-list"></div>
 			<div id="new-task-controls">
 				<img src="/assets/icons/plus.svg" id="new-task-button" onclick="change_task_add(document.getElementById('new-task-input').value, document.getElementById('new-task-priority').value)">
-				<input id="new-task-input" onkeydown="if (event.keyCode==13){change_task_add(this.value, document.getElementById('new-task-priority').value)}">
+				<input id="new-task-input" onkeydown="if (event.keyCode==13){change_task_add(this.value, document.getElementById('new-task-priority').value);this.value=''}">
 				<select id="new-task-priority">
 					<option value="low">Low</option>
 					<option value="medium">Medium</option>
@@ -20,13 +21,16 @@
 			</div>
 		</div>
 		<div id="side-panel">
-			<div id="no-task" class="">
+			<!-- <div id="no-task" class="">
 				<div id="no-ask-cont">
 					<h1>No Task Selected</h1>
 				</div>
+			</div> -->
+			<div id="breadcrumbs">
+				<span class="task-breadcrumb top-breadcrumb">{{ project_name }}</span>
 			</div>
 			<div id="sel-task-info">
-				<input type="text" id="sel-task-name" autocomplete="off"><br>
+				<input type="text" id="sel-task-name" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" onkeyup="if(event.code.toString()==='Enter'){if(current_task.name !== this.value){change_task_name(current_task.name,this.value)};this.blur()}"><br>
 			</div>
 		</div>
 		<div id="menu" class="hidden">
@@ -35,5 +39,9 @@
 		</div>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
 		<script src="/assets/js/manager.js"></script>
+		<!-- does small amount of basic setup related to rendering of the whole page -->
+		<script>
+			window.scrollBy(-window.scrollX, -window.scrollY);
+		</script>
 	</body>
 </html>
