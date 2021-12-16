@@ -163,6 +163,8 @@ body {
 #sel-task-name {
     font-size: 50px;
     border: none;
+    border-bottom: 2px solid black;
+    width: 80vw;
     cursor: url("/assets/cursors/edit.svg") 0 32, auto;
 }
 #sel-task-desc {
@@ -173,7 +175,10 @@ body {
 input:focus {
     outline: none;
 }
-#sel-priority-label {
+#sel-task-info label {
+    font-size: 20px;
+}
+#sel-task-info span {
     font-size: 20px;
 }
 #sel-task-priority {
@@ -184,5 +189,10 @@ input:focus {
 #sel-project-name {
     font-size: 50px;
     border: none;
+    border-bottom: 2px solid black;
+    width: 80vw;
     cursor: url("/assets/cursors/edit.svg") 0 32, auto;
+}
+#edit-project {
+    padding-top: 5px;
 }
