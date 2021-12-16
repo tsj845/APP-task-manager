@@ -148,12 +148,12 @@ def rename_proj (data):
 	data["id"] = 0
 	emit("update", data, to=origin)
 
-@socketio.on("rename-task")
+@socketio.on("task-name")
 def rename_task (data):
 	print(data)
 	print(f"task rename by {flask_socketio.flask.request.sid}")
 	origin = data["origin"]
-	newname = data["newname"]
+	newname = data["value"]
 	path = data["path"]
 	proj = projects[origin]
 	task = None
@@ -168,7 +168,7 @@ def rename_task (data):
 def task_pri (data):
 	print(f"task priority change by {flask_socketio.flask.request.sid}")
 	origin = data["origin"]
-	priority = data["priority"]
+	priority = data["value"]
 	proj = projects[origin]
 	task = None
 	path = data["path"]
@@ -198,7 +198,7 @@ def task_desc (data):
 	print(f"task description change by {flask_socketio.flask.request.sid}")
 	origin = data["origin"]
 	path = data["path"]
-	desc = data["desc"]
+	desc = data["value"]
 	proj = projects[origin]
 	task = None
 	for step in path:

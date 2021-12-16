@@ -117,7 +117,7 @@ function task_index (list, task) {
 
 // toggles a task's locked status
 function toggle_task_locked () {
-    change_task_locked(breadpath.slice(1), !current_task.locked);
+    change_task_property(breadpath.slice(1), "lock", !current_task.locked);
 }
 
 // updates the subtask display
@@ -504,7 +504,7 @@ socket.on("update", (data) => {
             break;
         // task name changed
         case 1:
-            update_task_name(data.path, data.newname);
+            update_task_name(data.path, data.value);
             break;
         // task removed
         case 2:
@@ -516,11 +516,11 @@ socket.on("update", (data) => {
             break;
         // task priority changed
         case 4:
-            update_task_priority(data.path, data.priority);
+            update_task_priority(data.path, data.value);
             break;
         // task description changed
         case 5:
-            update_task_description(data.path, data.desc);
+            update_task_description(data.path, data.value);
             break;
         // subtask deleted
         case 6:
@@ -557,28 +557,12 @@ function change_label_add (path, label) {
     socket.emit("label-add", {"origin":origin, "path":path, "label":label});
 }
 
-function change_task_locked (path, value) {
-    socket.emit("task-lock", {"origin":origin, "path":path, "value":value});
-}
-
 function change_remove_sub (path) {
     socket.emit("remove-task", {"origin":origin, "path":path});
 }
 
 function change_project_name (newname) {
     socket.emit("rename-proj", {"origin":origin, "name":newname});
-}
-
-function change_task_name (path, newname) {
-    socket.emit("rename-task", {"path":path, "origin":origin, "newname":newname});
-}
-
-function change_task_priority (path, priority) {
-    socket.emit("task-pri", {"path":path, "origin":origin, "priority":priority});
-}
-
-function change_task_description (path, description) {
-    socket.emit("task-desc", {"path":path, "origin":origin, "desc":description});
 }
 
 function change_task_remove (task) {
@@ -589,8 +573,8 @@ function change_task_add (task_name, priority) {
     socket.emit("add-task", {"task":{"name": task_name, "priority": priority, "desc": "new task", "labels": [], "subtasks":[], "locked": false, "completed": false}, "origin":origin});
 }
 
-function change_task_completion (path, completion) {
-    socket.emit("task-comp", {"path":path, "origin":origin, "value":completion})
+function change_task_property (path, property, value) {
+    socket.emit("task-"+property, {"path":path, "origin":origin, "value":value})
 }
 
 function show_new_label_options () {

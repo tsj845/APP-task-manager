@@ -28,11 +28,11 @@
 				<input type="text" id="sel-project-name" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" onkeyup="if(event.code.toString()==='Enter'){if(pname !== this.value){change_project_name(this.value)}}">
 			</div>			
 			<div id="sel-task-info" style="display:none;">
-				<input type="text" id="sel-task-name" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" onkeyup="if(event.code.toString()==='Enter'){if(current_task.name !== this.value){change_task_name(breadpath.slice(1),this.value)};this.blur()}"><br>
+				<input type="text" id="sel-task-name" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" onkeyup="if(event.code.toString()==='Enter'){if(current_task.name !== this.value){change_task_property(breadpath.slice(1),'name',this.value)};this.blur()}"><br>
 				<div id="quick-info">
 					<div>
 						<label for="priority" id="sel-priority-label">Priority</label>
-						<select name="priority" id="sel-task-priority" onchange="if(current_task && this.value !== current_task.value){change_task_priority(breadpath.slice(1), this.value)}">
+						<select name="priority" id="sel-task-priority" onchange="if(current_task && this.value !== current_task.value){change_task_property(breadpath.slice(1), 'pri', this.value)}">
 							<option value="low">Low</option>
 							<option value="medium">Medium</option>
 							<option value="high">High</option>
@@ -44,11 +44,11 @@
 					</div>
 					<div>
 						<label for="completed">Completed</label>
-						<input type="checkbox" id="sel-task-completed" name="completed" onclick="change_task_completion(breadpath.slice(1),this.checked)">
+						<input type="checkbox" id="sel-task-completed" name="completed" onclick="change_task_property(breadpath.slice(1),'comp',this.checked)">
 					</div>
 				</div>
 				<br>
-				<textarea id="sel-task-desc" autocomplete="off" onblur="if(current_task && this.value !== current_task.desc){change_task_description(breadpath.slice(1), this.value)}" onkeyupx="if(current_task && event.code.toString() === 'Enter' && this.value !== current_task.desc){change_task_description(breadpath.slice(1), this.value)}"></textarea>
+				<textarea id="sel-task-desc" autocomplete="off" onblur="if(current_task && this.value !== current_task.desc){change_task_description(breadpath.slice(1), this.value)}" onkeyup="if(current_task && event.code.toString() === 'Enter' && this.value !== current_task.desc){change_task_property(breadpath.slice(1), 'desc', this.value)}"></textarea>
 				<br>
 				<span>Labels:</span>
 				<select id="new-label-ops" onchange="console.log('nlo input');if(current_task && current_task.labels.indexOf(this.value) < 0 && this.value !== 'select'){change_label_add(breadpath.slice(1), this.value);this.selectedIndex=0;this.blur()}">
