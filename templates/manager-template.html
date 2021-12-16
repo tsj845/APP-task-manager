@@ -27,12 +27,12 @@
 			<div id="sel-task-info" style="display:none;">
 				<input type="text" id="sel-task-name" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" onkeyup="if(event.code.toString()==='Enter'){if(current_task.name !== this.value){change_task_name(current_task.name,this.value)};this.blur()}"><br>
 				<label for="priority" id="sel-priority-label">Priority:</label>
-				<select name="priority" id="sel-task-priority" onchange="if(current_task && this.value !== current_task.value){breadpath.length>2?change_subtask_priority_1(this.value):change_task_priority(current_task.name, this.value)}">
+				<select name="priority" id="sel-task-priority" onchange="if(current_task && this.value !== current_task.value){change_task_priority(breadpath.slice(1), this.value)}">
 					<option value="low">Low</option>
 					<option value="medium">Medium</option>
 					<option value="high">High</option>
 				</select><br>
-				<textarea id="sel-task-desc" autocomplete="off" onblur="if(current_task && this.value !== current_task.desc){change_task_description(current_task.name, this.value)}" onkeyupx="if(current_task && event.code.toString() === 'Enter' && this.value !== current_task.desc){change_task_description(current_task.name, this.value)}"></textarea>
+				<textarea id="sel-task-desc" autocomplete="off" onblur="if(current_task && this.value !== current_task.desc){change_task_description(breadpath.slice(1), this.value)}" onkeyupx="if(current_task && event.code.toString() === 'Enter' && this.value !== current_task.desc){change_task_description(breadpath.slice(1), this.value)}"></textarea>
 				<br>
 				<span>Labels:</span>
 				<div id="sel-task-labels">

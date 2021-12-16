@@ -177,46 +177,27 @@ def task_pri (data):
 	origin = data["origin"]
 	priority = data["priority"]
 	proj = projects[origin]
-	if ("name" in data.keys()):
-		name = data["name"]
-		index = -1
-		for i in range(len(proj)):
-			if (proj[i]["name"] == name):
-				index = i
-				break
-		if (index < 0):
-			return
-		proj[i]["priority"] = priority
-		data["id"] = 4
-	else:
-		data["id"] = 9
-		path = data["path"]
-		search = proj
-		for i in range(len(path)-1):
-			step = path[i]
-			index = task_index(search, step)
-			if (index < 0):
-				return
-			search = search[index]["subtasks"]
-		index = task_index(search, path[-1])
-		search[index]["priority"] = priority
+	task = None
+	path = data["path"]
+	for step in path:
+		task = proj[task_index(proj, step)]
+		proj = task["subtasks"]
+	task["priority"] = priority
+	data["id"] = 4
 	emit("update", data, to=origin)
 
 @socketio.on("task-desc")
 def task_desc (data):
 	print(f"task description change by {flask_socketio.flask.request.sid}")
 	origin = data["origin"]
-	name = data["name"]
+	path = data["path"]
 	desc = data["desc"]
 	proj = projects[origin]
-	index = -1
-	for i in range(len(proj)):
-		if (proj[i]["name"] == name):
-			index = i
-			break
-	if (index < 0):
-		return
-	proj[i]["desc"] = desc
+	task = None
+	for step in path:
+		task = proj[task_index(proj, step)]
+		proj = task["subtasks"]
+	task["desc"] = desc
 	data["id"] = 5
 	emit("update", data, to=origin)
 

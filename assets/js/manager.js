@@ -58,6 +58,11 @@ function breadcrumbclick (depth) {
     }
 }
 
+// checks path equalities
+function patheq (path) {
+    return path.join(",") === breadpath.slice(1).join(",");
+}
+
 // adds a breadcrumb
 function add_breadcrumb (task, depth) {
     const crumb = document.createElement("span");
@@ -264,22 +269,18 @@ function update_task_name (name, newname) {
     }
 }
 
-function update_task_priority (name, priority) {
-    if (task_index(tasks, name) > -1) {
-        const task = document.getElementById("task-"+name);
-        task.children[1].children[0].textContent = priority;
+function update_task_priority (path, priority) {
+    let task = null;
+    let search = tasks;
+    for (let i in path) {
+        task = search[task_index(search, path[i])];
+        search = task.subtasks;
     }
-    for (let i in tasks) {
-        let task = tasks[i];
-        if (task.name === name) {
-            task.priority = priority;
-            if (current_task) {
-                current_task.priority = priority;
-            }
-            break;
-        }
+    if (path.length === 1) {
+        document.getElementById("task-"+path[0]).children[1].children[0].textContent = priority;
     }
-    if (current_task.name === name) {
+    task.priority = priority;
+    if (patheq(path)) {
         seltsk_priority.selectedIndex = {"low":0,"medium":1,"med":1,"high":2}[priority];
     }
 }
@@ -305,16 +306,17 @@ function update_subtask_priority (path, priority) {
     }
 }
 
-function update_task_description (name, desc) {
-    for (let i in tasks) {
-        let task = tasks[i];
-        if (task.name === name) {
-            task.desc = desc;
-            if (current_task) {
-                current_task.desc = desc;
-            }
-            break;
-        }
+function update_task_description (path, desc) {
+    let task = null;
+    let search = tasks;
+    for (let i in path) {
+        task = search[task_index(search, path[i])];
+        search = task.subtasks;
+    }
+    task.desc = desc;
+    if (path.join(",") === breadpath.slice(1).join(",")) {
+        current_task.desc = desc;
+        seltsk_desc.value = desc;
     }
 }
 
@@ -434,11 +436,11 @@ socket.on("update", (data) => {
             break;
         // task priority changed
         case 4:
-            update_task_priority(data.name, data.priority);
+            update_task_priority(data.path, data.priority);
             break;
         // task description changed
         case 5:
-            update_task_description(data.name, data.desc);
+            update_task_description(data.path, data.desc);
             break;
         // subtask deleted
         case 6:
@@ -487,12 +489,12 @@ function change_task_name (task, newname) {
     socket.emit("rename-task", {"name":task, "origin":origin, "newname":newname});
 }
 
-function change_task_priority (task, priority) {
-    socket.emit("task-pri", {"name":task, "origin":origin, "priority":priority});
+function change_task_priority (path, priority) {
+    socket.emit("task-pri", {"path":path, "origin":origin, "priority":priority});
 }
 
-function change_task_description (task, description) {
-    socket.emit("task-desc", {"name":task, "origin":origin, "desc":description});
+function change_task_description (path, description) {
+    socket.emit("task-desc", {"path":path, "origin":origin, "desc":description});
 }
 
 function change_task_remove (task) {
