@@ -132,8 +132,42 @@ function update_subtask_display () {
     }
 }
 
+// makes a label
+function makeLabel (label) {
+    const cont = document.createElement("div");
+    cont.className = "task-label";
+    cont.id = "tasklabeldisplay-"+label;
+    cont.textContent = label;
+    seltsk_labels.appendChild(cont);
+}
+
+// updates task label display
+function update_label_display () {
+    for (let i in current_task.labels) {
+        makeLabel(current_task.labels[i]);
+    }
+}
+
+function enable_all () {
+    seltsk_name.disabled = false;
+    seltsk_priority.disabled = false;
+    seltsk_desc.disabled = false;
+    seltsk_completed.disabled = false;
+}
+
+function disable_all () {
+    seltsk_name.disabled = true;
+    seltsk_priority.disabled = true;
+    seltsk_desc.disabled = true;
+    seltsk_completed.disabled = true;
+}
+
 // displays a task
 function display_task (taskobj, light) {
+    enable_all();
+    if (taskobj.locked) {
+        disable_all();
+    }
     if (typeof taskobj === "string") {
         taskobj = current_task ? current_task.subtasks[task_index(current_task.subtasks, taskobj)] : tasks[task_index(tasks, taskobj)];
     }
@@ -155,6 +189,7 @@ function display_task (taskobj, light) {
     seltsk_completed.checked = taskobj.completed;
     seltsk_locked.src = taskobj.locked ? "/assets/icons/locked.svg" : "/assets/icons/unlocked.svg";
     update_subtask_display();
+    update_label_display();
 }
 
 function display_task_b (depth) {
@@ -349,6 +384,7 @@ function update_task_locked (path, value) {
     if (patheq(path)) {
         current_task.locked = value;
         seltsk_locked.src = value ? "/assets/icons/locked.svg" : "/assets/icons/unlocked.svg";
+        value ? disable_all() : enable_all();
     }
 }
 
@@ -393,6 +429,41 @@ function update_task_name (path, name) {
     }
 }
 
+function update_label_removed (path, label) {
+    let task = null;
+    let search = tasks;
+    for (let i in path) {
+        task = search[task_index(search, path[i])];
+        search = task.subtasks;
+    }
+    task.labels.splice(task.labels.indexOf(label), 1);
+    if (patheq(path)) {
+        current_task.labels.splice(current_task.labels.indexOf(label), 1);
+        let child = null;
+        for (let i in seltsk_labels.children) {
+            child = seltsk_labels.children[i];
+            if (child.id === "tasklabeldisplay-"+label) {
+                break;
+            }
+        }
+        seltsk_labels.removeChild(child);
+    }
+}
+
+function update_label_added (path, label) {
+    let task = null;
+    let search = tasks;
+    for (let i in path) {
+        task = search[task_index(search, path[i])]
+        search = task.subtasks;
+    }
+    task.labels.push(label);
+    if (patheq(path)) {
+        current_task.labels.push(label);
+        makeLabel(label);
+    }
+}
+
 socket.on("update", (data) => {
     const upid = data.id;
     switch (upid) {
@@ -428,9 +499,13 @@ socket.on("update", (data) => {
         case 7:
             update_subtask_added(data.path, data.task)
             break;
-        // subtask renamed
+        // label removed
         case 8:
-            update_subtask_name(data.path, data.name);
+            update_label_removed(data.path, data.label);
+            break;
+        // label added
+        case 9:
+            update_label_added(data.path, data.label);
             break;
         // any task locked status
         case 10:
@@ -442,6 +517,14 @@ socket.on("update", (data) => {
 	        break;	
     }
 });
+
+function change_label_remove (path, label) {
+    socket.emit("label-remove", {"origin":origin, "path":path, "label":label});
+}
+
+function change_label_add (path, label) {
+    socket.emit("label-add", {"origin":origin, "path":path, "label":label});
+}
 
 function change_task_locked (path, value) {
     socket.emit("task-lock", {"origin":origin, "path":path, "value":value});
