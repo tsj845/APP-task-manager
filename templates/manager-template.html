@@ -30,7 +30,7 @@
 			<div id="sel-task-info" style="display:none;">
 				<input type="text" id="sel-task-name" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" onkeyup="if(event.code.toString()==='Enter'){if(current_task.name !== this.value){change_task_name(current_task.name,this.value)};this.blur()}"><br>
 				<label for="priority" id="sel-priority-label">Priority:</label>
-				<select name="priority" id="sel-task-priority" onchange="if(current_task && this.value !== current_task.value){change_task_priority(current_task.name, this.value)}">
+				<select name="priority" id="sel-task-priority" onchange="if(current_task && this.value !== current_task.value){breadpath.length>2?change_subtask_priority_1(this.value):change_task_priority(current_task.name, this.value)}">
 					<option value="low">Low</option>
 					<option value="medium">Medium</option>
 					<option value="high">High</option>
@@ -45,7 +45,7 @@
 				<span>Subtasks:</span>
 				<div id="sel-task-subtasks"></div>
 				<label for="locked">Locked Status:</label>
-				<input type="image" id="sel-task-locked" name="locked" src="/assets/cursors/edit.svg">
+				<input type="image" id="sel-task-locked" name="locked" src="/assets/icons/unlocked.svg" onclick="toggle_task_locked()">
 				<br>
 				<label for="completed">Completed:</label>
 				<input type="checkbox" id="sel-task-completed" name="completed" onclick="change_task_completion(current_task.name,this.checked)">

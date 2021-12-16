@@ -189,18 +189,31 @@ def rename_task (data):
 def task_pri (data):
 	print(f"task priority change by {flask_socketio.flask.request.sid}")
 	origin = data["origin"]
-	name = data["name"]
 	priority = data["priority"]
 	proj = projects[origin]
-	index = -1
-	for i in range(len(proj)):
-		if (proj[i]["name"] == name):
-			index = i
-			break
-	if (index < 0):
-		return
-	proj[i]["priority"] = priority
-	data["id"] = 4
+	if ("name" in data.keys()):
+		name = data["name"]
+		index = -1
+		for i in range(len(proj)):
+			if (proj[i]["name"] == name):
+				index = i
+				break
+		if (index < 0):
+			return
+		proj[i]["priority"] = priority
+		data["id"] = 4
+	else:
+		data["id"] = 9
+		path = data["path"]
+		search = proj
+		for i in range(len(path)-1):
+			step = path[i]
+			index = task_index(search, step)
+			if (index < 0):
+				return
+			search = search[index]["subtasks"]
+		index = task_index(search, path[-1])
+		search[index]["priority"] = priority
 	emit("update", data, to=origin)
 
 @socketio.on("task-desc")
@@ -244,6 +257,29 @@ def leave_project ():
 	# id = flask_socketio.flask.request.sid
 	rooms = flask_socketio.rooms()
 	flask_socketio.leave_room(rooms[1])
+
+def _taskform (lst, indent=0):
+	final = ""
+	for task in lst:
+		keys = list(task.keys())
+		for i in range(len(keys)):
+			final += "    "*indent
+			key = keys[i]
+			final += f"{key} : "
+			if (key == "subtasks"):
+				final += f"[\n{_taskform(task[key], indent+1)}\n],\n" if len(task[key]) > 0 else "[],\n"
+			else:
+				final += f"{task[key]}"+(",\n" if i < len(keys)-1 else "")
+	if (indent == 0):
+		return f"\n[\n{final}\n]\n"
+	return final
+
+@socketio.on("dump--db")
+def dump__db (*a):
+	if (not a):
+		print(projects)
+	else:
+		print(_taskform(projects[a[0]["name"]]))
 
 # server
 socketio.run(server, host=ip, port="3000", debug=True)
