@@ -29,12 +29,17 @@ const seltsk_completed = document.getElementById("sel-task-completed");
 const tasklist = document.getElementById("task-list");
 // context menu
 const menu = document.getElementById("menu");
+// new label options
+const nlab_ops = document.getElementById("new-label-ops");
 // breadcrumbs
 const breadlist = document.getElementById("breadcrumbs");
 // origin project (project name) used for websocket communication
 let origin = pname.textContent;
 // tasks
 let tasks = null;
+
+// icons
+let icons = null;
 
 // selected task
 let current_task = null;
@@ -132,8 +137,67 @@ function update_subtask_display () {
     }
 }
 
+// makes a label
+function makeLabel (label) {
+    const cont = document.createElement("div");
+    cont.className = "task-label";
+    cont.id = "tasklabeldisplay-"+label;
+    cont.textContent = label;
+    const rem = document.createElement("input");
+    rem.type = "image";
+    rem.src = "/assets/icons/delete.svg";
+    rem.className = "inline-image label-remove";
+    rem.onclick = () => {
+        change_label_remove(breadpath.slice(1), label);
+    }
+    cont.appendChild(rem);
+    if (label in icons) {
+        const img = document.createElement("img");
+        img.className = "label-icon";
+        img.src = icons[label];
+        cont.appendChild(img);
+    }
+    seltsk_labels.appendChild(cont);
+}
+
+// updates task label display
+function update_label_display () {
+    seltsk_labels.replaceChildren();
+    for (let i in current_task.labels) {
+        makeLabel(current_task.labels[i]);
+    }
+}
+
+function enable_all () {
+    seltsk_name.disabled = false;
+    seltsk_priority.disabled = false;
+    seltsk_desc.disabled = false;
+    seltsk_completed.disabled = false;
+    nlab_ops.disabled = false;
+    const labels = document.getElementsByClassName("label-remove");
+    for (let i in labels) {
+        labels[i].disabled = false;
+    }
+}
+
+function disable_all () {
+    seltsk_name.disabled = true;
+    seltsk_priority.disabled = true;
+    seltsk_desc.disabled = true;
+    seltsk_completed.disabled = true;
+    nlab_ops.disabled = true;
+    const labels = document.getElementsByClassName("label-remove");
+    for (let i in labels) {
+        labels[i].disabled = true;
+    }
+}
+
 // displays a task
 function display_task (taskobj, light) {
+    enable_all();
+    if (taskobj.locked) {
+        disable_all();
+    }
     if (typeof taskobj === "string") {
         taskobj = current_task ? current_task.subtasks[task_index(current_task.subtasks, taskobj)] : tasks[task_index(tasks, taskobj)];
     }
@@ -155,6 +219,7 @@ function display_task (taskobj, light) {
     seltsk_completed.checked = taskobj.completed;
     seltsk_locked.src = taskobj.locked ? "/assets/icons/locked.svg" : "/assets/icons/unlocked.svg";
     update_subtask_display();
+    update_label_display();
 }
 
 function display_task_b (depth) {
@@ -242,6 +307,7 @@ socket.on("boot-res", (data) => {
     } else {
         booted = true;
         tasks = data.tasks;
+        icons = data.icons;
         bootrender();
     }
 });
@@ -349,6 +415,7 @@ function update_task_locked (path, value) {
     if (patheq(path)) {
         current_task.locked = value;
         seltsk_locked.src = value ? "/assets/icons/locked.svg" : "/assets/icons/unlocked.svg";
+        value ? disable_all() : enable_all();
     }
 }
 
@@ -393,6 +460,41 @@ function update_task_name (path, name) {
     }
 }
 
+function update_label_removed (path, label) {
+    let task = null;
+    let search = tasks;
+    for (let i in path) {
+        task = search[task_index(search, path[i])];
+        search = task.subtasks;
+    }
+    task.labels.splice(task.labels.indexOf(label), 1);
+    if (patheq(path)) {
+        current_task.labels.splice(current_task.labels.indexOf(label), 1);
+        let child = null;
+        for (let i in seltsk_labels.children) {
+            child = seltsk_labels.children[i];
+            if (child.id === "tasklabeldisplay-"+label) {
+                break;
+            }
+        }
+        seltsk_labels.removeChild(child);
+    }
+}
+
+function update_label_added (path, label) {
+    let task = null;
+    let search = tasks;
+    for (let i in path) {
+        task = search[task_index(search, path[i])]
+        search = task.subtasks;
+    }
+    task.labels.push(label);
+    if (patheq(path)) {
+        current_task.labels.push(label);
+        makeLabel(label);
+    }
+}
+
 socket.on("update", (data) => {
     const upid = data.id;
     switch (upid) {
@@ -428,9 +530,13 @@ socket.on("update", (data) => {
         case 7:
             update_subtask_added(data.path, data.task)
             break;
-        // subtask renamed
+        // label removed
         case 8:
-            update_subtask_name(data.path, data.name);
+            update_label_removed(data.path, data.label);
+            break;
+        // label added
+        case 9:
+            update_label_added(data.path, data.label);
             break;
         // any task locked status
         case 10:
@@ -442,6 +548,14 @@ socket.on("update", (data) => {
 	        break;	
     }
 });
+
+function change_label_remove (path, label) {
+    socket.emit("label-remove", {"origin":origin, "path":path, "label":label});
+}
+
+function change_label_add (path, label) {
+    socket.emit("label-add", {"origin":origin, "path":path, "label":label});
+}
 
 function change_task_locked (path, value) {
     socket.emit("task-lock", {"origin":origin, "path":path, "value":value});
@@ -477,6 +591,10 @@ function change_task_add (task_name, priority) {
 
 function change_task_completion (path, completion) {
     socket.emit("task-comp", {"path":path, "origin":origin, "value":completion})
+}
+
+function show_new_label_options () {
+    nlab_ops.className = "";
 }
 
 // if the meta key is pressed (used to disable custom context menu)

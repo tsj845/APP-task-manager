@@ -5,6 +5,7 @@
 	</head>
 	<body>
 		<div id="left-panel">
+			<input type="button" value="return to project selection" onclick="window.location.pathname='/'">
 			<h1 id="proj-name" onclick="edit_project()">{{ project_name }}</h1>
 			<div id="task-list"></div>
 			<div id="new-task-controls">
@@ -48,9 +49,11 @@
 				<textarea id="sel-task-desc" autocomplete="off" onblur="if(current_task && this.value !== current_task.desc){change_task_description(breadpath.slice(1), this.value)}" onkeyupx="if(current_task && event.code.toString() === 'Enter' && this.value !== current_task.desc){change_task_description(breadpath.slice(1), this.value)}"></textarea>
 				<br>
 				<span>Labels:</span>
-				<div id="sel-task-labels">
-					coming eventually
-				</div>
+				<select id="new-label-ops" onchange="console.log('nlo input');if(current_task && current_task.labels.indexOf(this.value) < 0 && this.value !== 'select'){change_label_add(breadpath.slice(1), this.value);this.selectedIndex=0;this.blur()}">
+					<option value="select"></option>
+					<option value="bug">Bug</option>
+				</select>
+				<div id="sel-task-labels"></div>
 				<br>
 				<span>Subtasks:</span>
 				<div id="sel-task-subtasks"></div>
