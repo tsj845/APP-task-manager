@@ -10,7 +10,7 @@ input[type="text"]:not(.default) {
     margin : 0px;
 }
 body {
-    /* overflow-y : hidden; */
+    overflow-y : hidden;
     margin: 0px;
 }
 #task-list {
@@ -198,6 +198,6 @@ input:focus {
 }
 
 #sel-task-locked {
-    /* width : 25px; */
+    width : 25px;
     vertical-align: middle;
 }
