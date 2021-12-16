@@ -115,11 +115,6 @@ function toggle_task_locked () {
     change_task_locked(breadpath.slice(1), !current_task.locked);
 }
 
-// updates a subtask's priority
-function change_subtask_priority_1 (value) {
-    change_subtask_priority(breadpath.slice(1), value);
-}
-
 // updates the subtask display
 function update_subtask_display () {
     seltsk_subtasks.replaceChildren();
@@ -285,27 +280,6 @@ function update_task_priority (path, priority) {
     }
 }
 
-function update_subtask_priority (path, priority) {
-    let search = tasks;
-    let task = null;
-    let build_path = ["top"];
-    console.log(path);
-    for (let i in path) {
-        console.log(i);
-        build_path.push(path[i]);
-        if (i === path.length-1) {
-            task = search[task_index(search, path[i])];
-            break;
-        }
-        search = search[task_index(search, path[i])].subtasks
-    }
-    console.log(task);
-    task.priority = priority;
-    if (breadpath.join(",") === build_path.join(",")) {
-        seltsk_priority.selectedIndex = {"low":0,"medium":1,"med":1,"high":2}[priority];
-    }
-}
-
 function update_task_description (path, desc) {
     let task = null;
     let search = tasks;
@@ -454,10 +428,6 @@ socket.on("update", (data) => {
         case 8:
             update_subtask_name(data.path, data.name);
             break;
-        // subtask priority changed
-        case 9:
-            update_subtask_priority(data.path, data.priority);
-            break;
         // any task locked status
         case 10:
             update_task_locked(data.path, data.value);
@@ -468,10 +438,6 @@ socket.on("update", (data) => {
 	        break;	
     }
 });
-
-function change_subtask_priority (path, priority) {
-    socket.emit("task-pri", {"origin":origin, "path":path, "priority":priority})
-}
 
 function change_task_locked (path, value) {
     socket.emit("task-lock", {"origin":origin, "path":path, "value":value});
