@@ -1,17 +1,3 @@
-import socket
-import sys
-s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-try:
-	s.connect(("10.255.255.255", 1))
-	ip = s.getsockname()[0]
-except Exception:
-	ip = "127.0.0.1"
-finally:
-	s.close()
-if (len(sys.argv) > 1):
-	ip = ip if sys.argv[1] == "prod" else "127.0.0.1"
-else:
-	ip = "127.0.0.1"
 from os import name
 from flask import Flask
 from flask import render_template as render
@@ -274,12 +260,21 @@ def _taskform (lst, indent=0):
 		return f"\n[\n{final}\n]\n"
 	return final
 
+def _projform ():
+	f = "[\n"
+	for key in projects.keys():
+		f += f"{key} : "
+		f += _taskform(projects[key])
+		f += ",\n"
+	f += "\n]"
+	return f
+
 @socketio.on("dump--db")
 def dump__db (*a):
 	if (not a):
-		print(projects)
+		print(_projform())
 	else:
 		print(_taskform(projects[a[0]["name"]]))
 
 # server
-socketio.run(server, host=ip, port="3000", debug=True)
+socketio.run(server, host="0.0.0.0", port="3000", debug=True)
