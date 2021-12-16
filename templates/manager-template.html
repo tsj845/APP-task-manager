@@ -5,8 +5,10 @@
 	</head>
 	<body>
 		<div id="left-panel">
-			<input type="button" value="return to project selection" onclick="window.location.pathname='/'">
-			<h1 id="proj-name" onclick="edit_project()">{{ project_name }}</h1>
+			<div id="proj-name-container">
+				<h1 id="proj-name" onclick="edit_project()">{{ project_name }}</h1>
+				<input type="button" id="project-select" value="select project" onclick="window.location.pathname='/'">
+			</div>
 			<div id="task-list"></div>
 			<div id="new-task-controls">
 				<img src="/assets/icons/plus.svg" id="new-task-button" onclick="change_task_add(document.getElementById('new-task-input').value, document.getElementById('new-task-priority').value)">

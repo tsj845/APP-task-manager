@@ -36,7 +36,6 @@ body {
     width : fit-content;
     transition : color linear 0.25s;
     width: 20vw;
-    border-bottom: 2px solid black;
 }
 #proj-name:hover {
     color : #444;
@@ -125,10 +124,11 @@ body {
     left : 0px;
     top : 0px;
     height : 100vh;
+    width: 20vw;
     overflow-y : scroll;
 }
 #new-task-button:hover, #new-task-input:hover, #new-task-priority:hover {
-    background-color: #eee;
+    background-color: #ccc;
 }
 
 #sel-task-name {
@@ -203,3 +203,12 @@ input:focus {
     display : inline;
 }
 
+#proj-name-container {
+    display: flex;
+    border-bottom: 2px solid black;
+}
+#project-select {
+    float: right;
+    border: none;
+    fill: #ddd;
+}
