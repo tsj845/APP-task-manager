@@ -146,29 +146,18 @@ def rename_proj (data):
 
 @socketio.on("rename-task")
 def rename_task (data):
+	print(data)
 	print(f"task rename by {flask_socketio.flask.request.sid}")
 	origin = data["origin"]
 	newname = data["newname"]
+	path = data["path"]
 	proj = projects[origin]
-	if ("name" in data.keys()):
-		index = task_index(proj, data["name"])
-		if (index < 0):
-			return
-		proj[index]["name"] = newname
-		projects[origin] = proj
-		data["id"] = 1
-	else:
-		data["id"] = 8
-		path = data["path"]
-		search = proj
-		for i in range(len(path)-1):
-			step = path[i]
-			index = task_index(search, step)
-			if (index < 0):
-				return
-			search = search[index]["subtasks"]
-		index = task_index(search, path[-1])
-		search[index]["name"] = newname
+	task = None
+	for step in path:
+		task = proj[task_index(proj, step)]
+		proj = task["subtasks"]
+	task["name"] = newname
+	data["id"] = 1
 	emit("update", data, to=origin)
 
 @socketio.on("task-pri")
@@ -184,6 +173,20 @@ def task_pri (data):
 		proj = task["subtasks"]
 	task["priority"] = priority
 	data["id"] = 4
+	emit("update", data, to=origin)
+
+@socketio.on("task-lock")
+def task_lock (data):
+	origin = data["origin"]
+	value = data["value"]
+	path = data["path"]
+	task = None
+	proj = projects[origin]
+	for step in path:
+		task = proj[task_index(proj, step)]
+		proj = task["subtasks"]
+	task["locked"] = value
+	data["id"] = 10
 	emit("update", data, to=origin)
 
 @socketio.on("task-desc")

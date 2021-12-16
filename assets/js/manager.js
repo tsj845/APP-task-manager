@@ -246,24 +246,6 @@ socket.on("boot-res", (data) => {
     }
 });
 
-function update_task_name (name, newname) {
-    if (task_index(tasks, name) > -1) {
-        const task = document.getElementById("task-"+name);
-        task.id = "task-"+newname;
-        task.children[0].children[0].textContent = newname;
-    }
-    for (let i in tasks) {
-        let task = tasks[i];
-        if (task.name === name) {
-            task.name = newname;
-            if (current_task) {
-                current_task.name = newname;
-            }
-            break;
-        }
-    }
-}
-
 function update_task_priority (path, priority) {
     let task = null;
     let search = tasks;
@@ -356,36 +338,58 @@ function update_task_completion (path, value) {
 function update_task_locked (path, value) {
     let search = tasks;
     let task = null;
-    let build_path = ["top"];
     for (let i in path) {
-        build_path.push(path[i]);
-        if (i === path.length-1) {
-            task = search[task_index(search, path[i])];
-            break;
-        }
+        task = search[task_index(search, path[i])];
         search = search[task_index(search, path[i])].subtasks
     }
     task.locked = value;
-    if (breadpath.join(",") === build_path.join(",")) {
-        seltsk_locked = value ? "/assets/icons/locked.svg" : "/assets/icons/unlocked.svg";
+    if (path.length === 1) {
+        document.getElementById("task-"+path[0]).children[3].children[0].textContent = value ? "locked" : "unlocked";
+    }
+    if (patheq(path)) {
+        current_task.locked = value;
+        seltsk_locked.src = value ? "/assets/icons/locked.svg" : "/assets/icons/unlocked.svg";
     }
 }
 
-function update_subtask_name (path, name) {
-    let search = tasks;
-    let task = null;
-    let build_path = ["top"];
-    for (let i in path) {
-        build_path.push(path[i]);
-        if (i === path.length-1) {
-            task = search[task_index(search, path[i])];
+function __update_subtask_button (old, name, pri) {
+    for (let i in seltsk_subtasks.children) {
+        const elem = seltsk_subtasks.children[i];
+        if (elem.value === old+" "+pri) {
+            elem.value = name+" "+pri;
+            elem.id = "subtaskdisplay-"+name;
             break;
         }
-        search = search[task_index(search, path[i])].subtasks
+    }
+}
+
+function update_task_name (path, name) {
+    let search = tasks;
+    let task = null;
+    for (let i in path) {
+        task = search[task_index(search, path[i])];
+        search = task.subtasks;
     }
     task.name = name;
-    if (breadpath.join(",") === build_path.join(",")) {
+    if (path.length === 1) {
+        document.getElementById("task-"+path[0]).children[0].children[0].textContent = name;
+        document.getElementById("task-"+path[0]).id = "task-"+name;
+    }
+    if (patheq(path)) {
+        current_task.name = name;
         seltsk_name.value = name;
+        breadpath[breadpath.length-1] = name;
+        update_bread_display();
+    }
+    if (breadpath.length-1 > path.length) {
+        if (breadpath.slice(1, path.length+1).join(",") === path.join(",")) {
+            breadpath[path.length] = name;
+            update_bread_display();
+        }
+    } else if (breadpath.length === path.length) {
+        if (breadpath.slice(1).join(",") === path.slice(0, path.length-1).join(",")) {
+            __update_subtask_button(path[path.length-1], name, task.priority);
+        }
     }
 }
 
@@ -398,7 +402,7 @@ socket.on("update", (data) => {
             break;
         // task name changed
         case 1:
-            update_task_name(data.name, data.newname);
+            update_task_name(data.path, data.newname);
             break;
         // task removed
         case 2:
@@ -451,8 +455,8 @@ function change_project_name (newname) {
     socket.emit("rename-proj", {"origin":origin, "name":newname});
 }
 
-function change_task_name (task, newname) {
-    socket.emit("rename-task", {"name":task, "origin":origin, "newname":newname});
+function change_task_name (path, newname) {
+    socket.emit("rename-task", {"path":path, "origin":origin, "newname":newname});
 }
 
 function change_task_priority (path, priority) {
@@ -468,7 +472,6 @@ function change_task_remove (task) {
 }
 
 function change_task_add (task_name, priority) {
-    console.log(priority);
     socket.emit("add-task", {"task":{"name": task_name, "priority": priority, "desc": "new task", "labels": [], "subtasks":[], "locked": false, "completed": false}, "origin":origin});
 }
 
