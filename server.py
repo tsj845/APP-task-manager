@@ -1,10 +1,22 @@
-from flask import Flask
-from flask import render_template as render
-from flask_socketio import SocketIO, send, emit
+import os
+try:
+	from flask import Flask
+	from flask import render_template as render
+	from flask_socketio import SocketIO, send, emit
+	from pymongo import MongoClient
+except ModuleNotFoundError as e:
+	print(str(e))
+	os.system("python3 -m pip install flask flask_socketio pymongo")
+	from flask import Flask
+	from flask import render_template as render
+	from flask_socketio import SocketIO, send, emit
+	from pymongo import MongoClient
 
 server = Flask(__name__)
 server.config["TEMPLATES_AUTO_RELOAD"] = True
 socketio = SocketIO(server)
+db = MongoClient("mongodb://localhost:27017/")
+print("db is", db['pyserver'])
 
 def mkTask (value, priority="med", labels=None, subtasks=None):
 	task = {"disp-value":value, "priority":priority, "labels":labels if labels else [], "subtasks":subtasks if subtasks else []}
