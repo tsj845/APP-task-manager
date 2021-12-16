@@ -122,7 +122,7 @@ body {
 }
 
 .hidden {
-    display : none;
+    display : none !important;
 }
 
 #new-task-controls {
@@ -200,4 +200,21 @@ input:focus {
 #sel-task-locked {
     width : 25px;
     vertical-align: middle;
+}
+
+.label-icon {
+    margin-left : 2px;
+    vertical-align : middle;
+    height : inherit;
+}
+
+/* styles images that are used in combination with text */
+.inline-image {
+    margin-left : 2px;
+    vertical-align : middle;
+    height : inherit;
+}
+
+#new-label-ops {
+    display : inline;
 }

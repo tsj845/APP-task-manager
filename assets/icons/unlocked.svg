@@ -2,10 +2,10 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 900 900" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <g transform="matrix(1.00035,0,0,1.45613,22.4644,-237.988)">
-        <path d="M558.72,371.259C532.35,338.38 482.032,317.958 427.388,317.958C344.574,317.958 277.44,364.079 277.44,420.971L314.927,420.971C314.927,378.302 365.277,343.711 427.388,343.711C468.371,343.711 506.109,359.027 525.887,383.687L558.72,371.259Z" style="fill:rgb(231,232,233);"/>
+        <path d="M558.72,371.259C532.35,338.38 482.032,317.958 427.388,317.958C344.574,317.958 277.44,364.079 277.44,420.971L314.927,420.971C314.927,378.302 365.277,343.711 427.388,343.711C468.371,343.711 506.109,359.027 525.887,383.687L558.72,371.259Z" style="fill:rgb(197,198,199);"/>
     </g>
     <g transform="matrix(1.13586,0,0,0.466803,-44.0206,189.724)">
-        <rect x="302.872" y="396.904" width="33.015" height="160.667" style="fill:rgb(231,232,233);"/>
+        <rect x="302.872" y="396.904" width="33.015" height="160.667" style="fill:rgb(197,198,199);"/>
     </g>
     <g transform="matrix(1.00372,0,0,1.74435,-1.1153,-492.986)">
         <rect x="300.13" y="540.594" width="298.889" height="128.988" style="fill:rgb(232,182,46);"/>

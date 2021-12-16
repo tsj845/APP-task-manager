@@ -21,11 +21,12 @@ project1tasks = [
 ]
 
 testservertasks = [
-	{"name":"test1", "priority":"low", "desc":"subtask testing", "labels":[], "subtasks":[{"name":"subtask1", "priority":"low", "desc":"subtask testing", "labels":[], "subtasks":[], "locked":False, "completed":False}], "locked":False, "completed":False},
+	{"name":"test1", "priority":"low", "desc":"subtask testing", "labels":["bug"], "subtasks":[{"name":"subtask1", "priority":"low", "desc":"subtask testing", "labels":[], "subtasks":[], "locked":False, "completed":False}], "locked":False, "completed":False},
 	{"name":"general", "priority":"high", "desc":"general testing", "labels":[], "subtasks":[], "locked":False, "completed":False}
 ]
 
 projects = {"project1":project1tasks, "xyz":testservertasks}
+icons = {"project1":{}, "xyz":{"bug":"/assets/label-icons/bug.svg"}}
 
 
 # helper function to get index of task in a list
@@ -92,7 +93,7 @@ def boot_client (data):
 	print(str(flask_socketio.has_request_context()), "boot")
 	print(dir(flask_socketio.flask.request), "request")
 	print(flask_socketio.flask.request.sid)
-	emit("boot-res", {"tasks":projects[data["project"]]})
+	emit("boot-res", {"tasks":projects[data["project"]],"icons":icons[data["project"]]})
 
 @socketio.on("remove-task")
 def remove_subtask (data):
@@ -141,6 +142,9 @@ def rename_proj (data):
 	proj = projects[origin]
 	projects[name] = proj
 	projects.pop(origin)
+	icos = icons[origin]
+	icons[name] = icos
+	icons.pop(origin)
 	data["id"] = 0
 	emit("update", data, to=origin)
 
@@ -229,7 +233,7 @@ def label_remove (data):
 	for step in path:
 		task = proj[task_index(proj, step)]
 		proj = task["subtasks"]
-	task["labels"].pop(task.labels.index(label))
+	task["labels"].pop(task["labels"].index(label))
 	data["id"] = 8
 	socketio.emit("update", data, to=origin)
 

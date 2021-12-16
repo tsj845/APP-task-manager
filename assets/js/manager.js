@@ -29,12 +29,17 @@ const seltsk_completed = document.getElementById("sel-task-completed");
 const tasklist = document.getElementById("task-list");
 // context menu
 const menu = document.getElementById("menu");
+// new label options
+const nlab_ops = document.getElementById("new-label-ops");
 // breadcrumbs
 const breadlist = document.getElementById("breadcrumbs");
 // origin project (project name) used for websocket communication
 let origin = pname.textContent;
 // tasks
 let tasks = null;
+
+// icons
+let icons = null;
 
 // selected task
 let current_task = null;
@@ -138,11 +143,26 @@ function makeLabel (label) {
     cont.className = "task-label";
     cont.id = "tasklabeldisplay-"+label;
     cont.textContent = label;
+    const rem = document.createElement("input");
+    rem.type = "image";
+    rem.src = "/assets/icons/delete.svg";
+    rem.className = "inline-image label-remove";
+    rem.onclick = () => {
+        change_label_remove(breadpath.slice(1), label);
+    }
+    cont.appendChild(rem);
+    if (label in icons) {
+        const img = document.createElement("img");
+        img.className = "label-icon";
+        img.src = icons[label];
+        cont.appendChild(img);
+    }
     seltsk_labels.appendChild(cont);
 }
 
 // updates task label display
 function update_label_display () {
+    seltsk_labels.replaceChildren();
     for (let i in current_task.labels) {
         makeLabel(current_task.labels[i]);
     }
@@ -153,6 +173,11 @@ function enable_all () {
     seltsk_priority.disabled = false;
     seltsk_desc.disabled = false;
     seltsk_completed.disabled = false;
+    nlab_ops.disabled = false;
+    const labels = document.getElementsByClassName("label-remove");
+    for (let i in labels) {
+        labels[i].disabled = false;
+    }
 }
 
 function disable_all () {
@@ -160,6 +185,11 @@ function disable_all () {
     seltsk_priority.disabled = true;
     seltsk_desc.disabled = true;
     seltsk_completed.disabled = true;
+    nlab_ops.disabled = true;
+    const labels = document.getElementsByClassName("label-remove");
+    for (let i in labels) {
+        labels[i].disabled = true;
+    }
 }
 
 // displays a task
@@ -277,6 +307,7 @@ socket.on("boot-res", (data) => {
     } else {
         booted = true;
         tasks = data.tasks;
+        icons = data.icons;
         bootrender();
     }
 });
@@ -560,6 +591,10 @@ function change_task_add (task_name, priority) {
 
 function change_task_completion (path, completion) {
     socket.emit("task-comp", {"path":path, "origin":origin, "value":completion})
+}
+
+function show_new_label_options () {
+    nlab_ops.className = "";
 }
 
 // if the meta key is pressed (used to disable custom context menu)
