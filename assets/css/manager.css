@@ -183,7 +183,8 @@ input:focus {
 }
 #sel-task-priority {
     outline : none;
-    /* font-size: 20px; */
+    border: none;
+    fill: #ccc;
 }
 
 #sel-project-name {
@@ -200,4 +201,17 @@ input:focus {
 #sel-task-locked {
     width : 25px;
     vertical-align: middle;
+}
+
+#quick-info {
+    width: fit-content;
+    display: flex;
+    border-bottom: 2px solid black;
+}
+#quick-info * {
+    font-size: 20px;
+}
+#quick-info div {
+    float: left;
+    border-right: 2px solid black;
 }

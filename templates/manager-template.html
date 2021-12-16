@@ -26,12 +26,25 @@
 			</div>			
 			<div id="sel-task-info" style="display:none;">
 				<input type="text" id="sel-task-name" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" onkeyup="if(event.code.toString()==='Enter'){if(current_task.name !== this.value){change_task_name(breadpath.slice(1),this.value)};this.blur()}"><br>
-				<label for="priority" id="sel-priority-label">Priority:</label>
-				<select name="priority" id="sel-task-priority" onchange="if(current_task && this.value !== current_task.value){change_task_priority(breadpath.slice(1), this.value)}">
-					<option value="low">Low</option>
-					<option value="medium">Medium</option>
-					<option value="high">High</option>
-				</select><br>
+				<div id="quick-info">
+					<div>
+						<label for="priority" id="sel-priority-label">Priority</label>
+						<select name="priority" id="sel-task-priority" onchange="if(current_task && this.value !== current_task.value){change_task_priority(breadpath.slice(1), this.value)}">
+							<option value="low">Low</option>
+							<option value="medium">Medium</option>
+							<option value="high">High</option>
+						</select>
+					</div>
+					<div>
+						<label for="locked">Locked Status</label>
+						<input type="image" id="sel-task-locked" name="locked" src="/assets/icons/unlocked.svg" onclick="toggle_task_locked()">
+					</div>
+					<div>
+						<label for="completed">Completed</label>
+						<input type="checkbox" id="sel-task-completed" name="completed" onclick="change_task_completion(breadpath.slice(1),this.checked)">
+					</div>
+				</div>
+				<br>
 				<textarea id="sel-task-desc" autocomplete="off" onblur="if(current_task && this.value !== current_task.desc){change_task_description(breadpath.slice(1), this.value)}" onkeyupx="if(current_task && event.code.toString() === 'Enter' && this.value !== current_task.desc){change_task_description(breadpath.slice(1), this.value)}"></textarea>
 				<br>
 				<span>Labels:</span>
@@ -41,11 +54,6 @@
 				<br>
 				<span>Subtasks:</span>
 				<div id="sel-task-subtasks"></div>
-				<label for="locked">Locked Status:</label>
-				<input type="image" id="sel-task-locked" name="locked" src="/assets/icons/unlocked.svg" onclick="toggle_task_locked()">
-				<br>
-				<label for="completed">Completed:</label>
-				<input type="checkbox" id="sel-task-completed" name="completed" onclick="change_task_completion(breadpath.slice(1),this.checked)">
 			</div>
 		</div>
 		<div id="menu" class="hidden">
