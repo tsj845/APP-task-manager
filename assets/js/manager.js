@@ -152,11 +152,8 @@ function display_task (taskobj, light) {
     seltsk_name.value = taskobj.name;
     seltsk_priority.value = taskobj.priority;
     seltsk_desc.value = taskobj.desc;
-<<<<<<< HEAD
     seltsk_completed.checked = taskobj.completed;
-=======
     seltsk_locked.src = taskobj.locked ? "/assets/icons/locked.svg" : "/assets/icons/unlocked.svg";
->>>>>>> 9fcb46fa4f5ce0d2a7488e7546b248dcdb5f4544
     update_subtask_display();
 }
 
@@ -364,7 +361,6 @@ function update_subtask_added (path, task) {
     search.push(task);
 }
 
-<<<<<<< HEAD
 function update_task_completion (name, completion) {
     if (task_index(tasks, name) > -1) {
         const task = document.getElementById("task-"+name);
@@ -379,7 +375,8 @@ function update_task_completion (name, completion) {
             }
             break;
         }
-=======
+    }
+}
 function update_task_locked (path, value) {
     let search = tasks;
     let task = null;
@@ -413,7 +410,6 @@ function update_subtask_name (path, name) {
     task.name = name;
     if (breadpath.join(",") === build_path.join(",")) {
         seltsk_name.value = name;
->>>>>>> 9fcb46fa4f5ce0d2a7488e7546b248dcdb5f4544
     }
 }
 
@@ -452,12 +448,6 @@ socket.on("update", (data) => {
         case 7:
             update_subtask_added(data.path, data.task)
             break;
-<<<<<<< HEAD
-	// task completion changed
-        case 8:
-            update_task_completion(data.name, data.completed);
-	    break;
-=======
         // subtask renamed
         case 8:
             update_subtask_name(data.path, data.name);
@@ -470,7 +460,10 @@ socket.on("update", (data) => {
         case 10:
             update_task_locked(data.path, data.value);
             break;
->>>>>>> 9fcb46fa4f5ce0d2a7488e7546b248dcdb5f4544
+	// task completion changed
+        case 11:
+            update_task_completion(data.name, data.completed);
+	    break;	
     }
 });
 

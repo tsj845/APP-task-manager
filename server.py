@@ -249,7 +249,7 @@ def task_comp (data):
 	if (index < 0):
 		return
 	proj[i]["completed"] = completed
-	data["id"] = 8
+	data["id"] = 11
 	emit("update", data, to=origin)
 
 @socketio.on("leav-proj")
