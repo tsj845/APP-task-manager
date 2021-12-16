@@ -142,6 +142,7 @@ function display_task (taskobj, light) {
     seltsk_name.value = taskobj.name;
     seltsk_priority.value = taskobj.priority;
     seltsk_desc.value = taskobj.desc;
+    seltsk_completed.checked = taskobj.completed;
     update_subtask_display();
 }
 
@@ -325,6 +326,23 @@ function update_subtask_added (path, task) {
     search.push(task);
 }
 
+function update_task_completion (name, completion) {
+    if (task_index(tasks, name) > -1) {
+        const task = document.getElementById("task-"+name);
+        task.children[2].children[0].textContent = completion ? "completed" : "incomplete";
+    }
+    for (let i in tasks) {
+        let task = tasks[i];
+        if (task.name === name) {
+            task.completion = completion;
+            if (current_task) {
+                current_task.completion = completion;
+            }
+            break;
+        }
+    }
+}
+
 socket.on("update", (data) => {
     const upid = data.id;
     switch (upid) {
@@ -360,6 +378,10 @@ socket.on("update", (data) => {
         case 7:
             update_subtask_added(data.path, data.task)
             break;
+	// task completion changed
+        case 8:
+            update_task_completion(data.name, data.completed);
+	    break;
     }
 });
 
@@ -390,6 +412,10 @@ function change_task_remove (task) {
 function change_task_add (task_name, priority) {
     console.log(priority);
     socket.emit("add-task", {"task":{"name": task_name, "priority": priority, "desc": "new task", "labels": [], "subtasks":[], "locked": false, "completed": false}, "origin":origin});
+}
+
+function change_task_completion (task, completion) {
+    socket.emit("task-comp", {"name":task, "origin":origin, "completed":completion})
 }
 
 // if the meta key is pressed (used to disable custom context menu)

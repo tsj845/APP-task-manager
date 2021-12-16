@@ -48,7 +48,7 @@
 				<input type="image" id="sel-task-locked" name="locked" src="/assets/cursors/edit.svg">
 				<br>
 				<label for="completed">Completed:</label>
-				<input type="checkbox" id="sel-task-completed" name="completed">
+				<input type="checkbox" id="sel-task-completed" name="completed" onclick="change_task_completion(current_task.name,this.checked)">
 			</div>
 		</div>
 		<div id="menu" class="hidden">

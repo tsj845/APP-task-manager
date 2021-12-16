@@ -221,6 +221,24 @@ def task_desc (data):
 	data["id"] = 5
 	emit("update", data, to=origin)
 
+@socketio.on("task-comp")
+def task_comp (data):
+	print(f"task completion change by {flask_socketio.flask.request.sid}")
+	origin = data["origin"]
+	name = data["name"]
+	completed = data["completed"]
+	proj = projects[origin]
+	index = -1
+	for i in range(len(proj)):
+		if (proj[i]["name"] == name):
+			index = i
+			break
+	if (index < 0):
+		return
+	proj[i]["completed"] = completed
+	data["id"] = 8
+	emit("update", data, to=origin)
+
 @socketio.on("leav-proj")
 def leave_project ():
 	# id = flask_socketio.flask.request.sid
