@@ -224,17 +224,14 @@ def task_desc (data):
 def task_comp (data):
 	print(f"task completion change by {flask_socketio.flask.request.sid}")
 	origin = data["origin"]
-	name = data["name"]
-	completed = data["completed"]
+	path = data["path"]
+	value = data["value"]
 	proj = projects[origin]
-	index = -1
-	for i in range(len(proj)):
-		if (proj[i]["name"] == name):
-			index = i
-			break
-	if (index < 0):
-		return
-	proj[i]["completed"] = completed
+	task = None
+	for i in range(len(path)):
+		task = proj[task_index(proj, path[i])]
+		proj = task["subtasks"]
+	task["completed"] = value
 	data["id"] = 11
 	emit("update", data, to=origin)
 

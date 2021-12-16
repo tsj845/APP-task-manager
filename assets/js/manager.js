@@ -361,20 +361,20 @@ function update_subtask_added (path, task) {
     search.push(task);
 }
 
-function update_task_completion (name, completion) {
-    if (task_index(tasks, name) > -1) {
-        const task = document.getElementById("task-"+name);
-        task.children[2].children[0].textContent = completion ? "completed" : "incomplete";
+function update_task_completion (path, value) {
+    let task = null;
+    let search = tasks;
+    for (let i in path) {
+        task = search[task_index(search, path[i])];
+        search = task.subtasks;
     }
-    for (let i in tasks) {
-        let task = tasks[i];
-        if (task.name === name) {
-            task.completion = completion;
-            if (current_task) {
-                current_task.completion = completion;
-            }
-            break;
-        }
+    task.completed = value;
+    if (path.join(",") === breadpath.slice(1).join(",")) {
+        current_task.completed = value;
+        seltsk_completed.checked = value;
+    }
+    if (path.length === 1) {
+        document.getElementById("task-"+path[0]).children[2].children[0].textContent = value ? "complete" : "incomplete";
     }
 }
 function update_task_locked (path, value) {
@@ -460,10 +460,10 @@ socket.on("update", (data) => {
         case 10:
             update_task_locked(data.path, data.value);
             break;
-	// task completion changed
+	    // task completion changed
         case 11:
-            update_task_completion(data.name, data.completed);
-	    break;	
+            update_task_completion(data.path, data.value);
+	        break;	
     }
 });
 
@@ -504,8 +504,8 @@ function change_task_add (task_name, priority) {
     socket.emit("add-task", {"task":{"name": task_name, "priority": priority, "desc": "new task", "labels": [], "subtasks":[], "locked": false, "completed": false}, "origin":origin});
 }
 
-function change_task_completion (task, completion) {
-    socket.emit("task-comp", {"name":task, "origin":origin, "completed":completion})
+function change_task_completion (path, completion) {
+    socket.emit("task-comp", {"path":path, "origin":origin, "value":completion})
 }
 
 // if the meta key is pressed (used to disable custom context menu)

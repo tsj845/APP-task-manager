@@ -4,9 +4,6 @@
 		<link rel="stylesheet" type="text/css" href="/assets/css/breadcrumbs.css" />
 	</head>
 	<body>
-		<!-- <img src="/assets/icons/rename.svg">
-		<img src="/assets/cursors/edit.svg">
-		<img src="/assets/icons/delete.svg"> -->
 		<div id="left-panel">
 			<h1 id="proj-name" onclick="edit_project()">{{ project_name }}</h1>
 			<div id="task-list"></div>
@@ -48,7 +45,7 @@
 				<input type="image" id="sel-task-locked" name="locked" src="/assets/icons/unlocked.svg" onclick="toggle_task_locked()">
 				<br>
 				<label for="completed">Completed:</label>
-				<input type="checkbox" id="sel-task-completed" name="completed" onclick="change_task_completion(current_task.name,this.checked)">
+				<input type="checkbox" id="sel-task-completed" name="completed" onclick="change_task_completion(breadpath.slice(1),this.checked)">
 			</div>
 		</div>
 		<div id="menu" class="hidden">
