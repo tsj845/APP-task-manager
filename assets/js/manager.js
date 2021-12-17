@@ -352,35 +352,24 @@ function update_label_display () {
     }
 }
 
-function enable_all () {
-    seltsk_name.disabled = false;
-    seltsk_priority.disabled = false;
-    seltsk_desc.disabled = false;
-    seltsk_completed.disabled = false;
-    nlab_ops.disabled = false;
+function set_disable_all (disable) {
+    seltsk_name.disabled = disable;
+    seltsk_priority.disabled = disable;
+    seltsk_desc.disabled = disable;
+    seltsk_completed.disabled = disable;
+    nlab_ops.disabled = disable;
     const labels = document.getElementsByClassName("label-remove");
     for (let i in labels) {
-        labels[i].disabled = false;
+        labels[i].disabled = disable;
     }
-}
 
-function disable_all () {
-    seltsk_name.disabled = true;
-    seltsk_priority.disabled = true;
-    seltsk_desc.disabled = true;
-    seltsk_completed.disabled = true;
-    nlab_ops.disabled = true;
-    const labels = document.getElementsByClassName("label-remove");
-    for (let i in labels) {
-        labels[i].disabled = true;
-    }
 }
 
 // displays a task
 function display_task (taskobj, light) {
-    enable_all();
+    set_disable_all(false);
     if (taskobj.locked) {
-        disable_all();
+        set_disable_all(true);
     }
     if (typeof taskobj === "string") {
         taskobj = current_task ? current_task.subtasks[task_index(current_task.subtasks, taskobj)] : tasks[task_index(tasks, taskobj)];
@@ -640,7 +629,7 @@ function update_task_locked (path, value) {
     if (patheq(path)) {
         current_task.locked = value;
         seltsk_locked.src = value ? "/assets/icons/locked.svg" : "/assets/icons/unlocked.svg";
-        value ? disable_all() : enable_all();
+        value ? set_disable_all(true) : set_disable_all(false);
     }
 }
 
