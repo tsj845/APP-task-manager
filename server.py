@@ -45,19 +45,6 @@ def projectsf ():
 server.add_url_rule("/", endpoint="index")
 server.add_url_rule("/projects", endpoint="index")
 
-# @server.context_processor
-# def useful_functions():
-# 	def task_html(task):
-# 		if "subtasks" in task:
-# 			html = "<p class=\'task\'>" + task["name"] + "</p>" + "<ul>"
-# 			for subtask in task["subtasks"]:
-# 				html += f"<li>" + task_html(subtask) + "</li>"
-# 			html += "</ul>"
-# 			return html
-# 		else:
-# 			return "<p class=\'task\'>" + task["name"] + "</p>"
-# 	return dict(task_html=task_html)
-
 @server.route("/projects/<project>")
 def projectf (project):
 	if (project not in projects.keys()):
@@ -85,14 +72,14 @@ def handle_internal_error (e):
 def hand_connect (*a):
 	pass
 
+@socketio.on("pboot")
+def boot_project_client ():
+	flask_socketio.join_room("project-view")
+	emit("boot-res")
+
 @socketio.on("boot")
 def boot_client (data):
-	print(data)
 	flask_socketio.join_room(data["project"])
-	print(flask_socketio.rooms())
-	print(str(flask_socketio.has_request_context()), "boot")
-	print(dir(flask_socketio.flask.request), "request")
-	print(flask_socketio.flask.request.sid)
 	emit("boot-res", {"tasks":projects[data["project"]],"icons":icons[data["project"]]})
 
 @socketio.on("remove-task")
@@ -142,6 +129,7 @@ def rename_proj (data):
 	icons.pop(origin)
 	data["id"] = 0
 	emit("update", data, to=origin)
+	emit("name-change", {"old":origin,"name":name}, to="project-view")
 
 @socketio.on("task-name")
 def rename_task (data):
@@ -248,6 +236,7 @@ def label_add (data):
 
 @socketio.on("leav-proj")
 def leave_project ():
+	print("leaving")
 	# id = flask_socketio.flask.request.sid
 	rooms = flask_socketio.rooms()
 	flask_socketio.leave_room(rooms[1])
