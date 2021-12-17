@@ -3,6 +3,8 @@ let socket = io();
 // project name
 const pname = document.getElementById("proj-name");
 pname.size = pname.textContent.length;
+// search
+const tsk_search = document.getElementById("search-bar");
 // side panel (right)
 const panel = document.getElementById("side-panel");
 // no task cover
@@ -52,6 +54,60 @@ let breadpath = ["top"];
 
 // if the page setup is done
 let booted = false;
+
+function getSpace (str, no) {
+    let iss = false;
+    let f = 0;
+    for (let i in str) {
+        const c = str[i];
+        if (c === '"') {
+            iss = !iss;
+        }
+        if (c === " " && !iss) {
+            f ++;
+            if (f === no) {
+                return Number(i);
+            }
+        }
+    }
+    return 0;
+}
+
+// parses search bar
+function parse_search () {
+    let v = tsk_search.value;
+    let sorting = null;
+    v = v.split(";");
+    if (v.length === 1 && v[0] === "") {
+        tsk_sch_param = null;
+        display_tasks();
+        return;
+    }
+    tsk_sch_param = {criteria:[],sorting:false,sortby:null};
+    if (v[v.length-1].indexOf("sort") > -1) {
+        sorting = v[v.length-1];
+        v.splice(v.length-1);
+    }
+    let fin = [];
+    for (let i in v) {
+        let a = v[i];
+        let ind1 = getSpace(a, 1);
+        let ind2 = getSpace(a, 2);
+        let build = [];
+        // console.log(a, ind1, ind2);
+        build.push(a.slice(0, ind1));
+        build.push(a.slice(ind1+1, ind2));
+        build.push(a.slice(ind2+1));
+        // console.log(build);
+        fin.push(build.join(","));
+    }
+    tsk_sch_param.criteria = fin;
+    tsk_sch_param.sorting = sorting !== null;
+    if (tsk_sch_param.sorting) {
+        tsk_sch_param.sortby = Number(sorting.slice(sorting.indexOf("=")+1));
+    }
+    display_tasks();
+}
 
 // parses search criteria
 function sortcrit__parse_crit (crits) {
@@ -115,6 +171,54 @@ function sort__meets_crit (obj) {
     return true;
 }
 
+function alphasort (n1, n2) {
+    const alph = "abcdefghijklmnopqrstuvwxyz";
+    for (let i = 0; i < Math.min(n1.length, n2.length); i ++) {
+        if (n1[i] === n2[i]) {
+            continue;
+        }
+        return alph.indexOf(n1[i].toLowerCase()) > alph.indexOf(n2[i].toLowerCase());
+    }
+    return n1.length > n2.length;
+}
+
+// determines if a swap is necessary
+function sortfin_reqswap (i0, i1) {
+    const pd = {"low":0, "med":1, "medium":1, "high":2};
+    switch (tsk_sch_param.sortby) {
+        case 0:
+            return alphasort(i0.name, i1.name);
+        case 1:
+            return !alphasort(i0.name, i1.name);
+        case 2:
+            return pd[i0.priority] < pd[i1.priority];
+        case 3:
+            return pd[i0.priority] > pd[i1.priority];
+    }
+}
+
+// sorts task list
+function sort__sortfinal (final) {
+    let done = false;
+    while (!done) {
+        done = true;
+        for (let i in final) {
+            if (i === "0") {
+                continue;
+            }
+            const sw = sortfin_reqswap(final[i-1], final[i]);
+            // console.log(final[i-1], final[i], sw);
+            if (sw) {
+                const hold = final[i];
+                final[i] = final[i-1];
+                final[i-1] = hold;
+                done = false;
+            }
+        }
+    }
+    return final;
+}
+
 // gets sorted task list based on search parameter
 function getSorted () {
     let final = [];
@@ -124,6 +228,10 @@ function getSorted () {
             final.push(task);
         }
     }
+    if (tsk_sch_param.sorting) {
+        return sort__sortfinal(final);
+    }
+    return final;
 }
 
 // handles a click on a breadcrumb
@@ -362,6 +470,7 @@ function makeTask (data) {
 
 // displays task list
 function display_tasks () {
+    tasklist.replaceChildren();
     if (tsk_sch_param === null) {
         for (let i in tasks) {
             makeTask(tasks[i]);
