@@ -29,8 +29,6 @@ const seltsk_locked = document.getElementById("sel-task-locked");
 const seltsk_completed = document.getElementById("sel-task-completed");
 // task list
 const tasklist = document.getElementById("task-list");
-// context menu
-const menu = document.getElementById("menu");
 // new label options
 const nlab_ops = document.getElementById("new-label-ops");
 // breadcrumbs
@@ -788,39 +786,3 @@ function change_task_property (path, property, value) {
 function show_new_label_options () {
     nlab_ops.className = "";
 }
-
-// if the meta key is pressed (used to disable custom context menu)
-let command = false;
-
-// key down
-document.addEventListener("keydown", (e) => {
-    const key = e.code.toString();
-    if (key === "MetaLeft" || key === "MetaRight") {
-        command = true;
-    }
-});
-
-// key up
-document.addEventListener("keyup", (e) => {
-    const key = e.code.toString();
-    if (key === "MetaLeft" || key === "MetaRight") {
-        command = false;
-    }
-});
-
-// user click hides context menu
-document.addEventListener("click", (e) => {
-    menu.className = "hidden";
-});
-
-// shows custom context menu if meta key is not pressed
-document.addEventListener("contextmenu", (e) => {
-    if (!command) {
-        menu.className = "";
-        menu.style.cssText = "left:"+e.clientX+";top:"+e.clientY+";";
-        e.preventDefault();
-        return false;
-    } else {
-        command = false;
-    }
-});
