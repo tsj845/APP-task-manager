@@ -66,8 +66,6 @@ def handle_bad_request (e):
 def handle_internal_error (e):
 	return render("errors/500.html"), 500
 
-# server.register_error_handler(404, handle_bad_request)
-
 @socketio.on("connection")
 def hand_connect (*a):
 	pass

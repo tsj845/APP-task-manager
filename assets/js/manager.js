@@ -38,6 +38,9 @@ let origin = pname.textContent;
 // tasks
 let tasks = null;
 
+// task search parameter
+let tsk_sch_param = null;
+
 // icons
 let icons = null;
 
@@ -49,6 +52,79 @@ let breadpath = ["top"];
 
 // if the page setup is done
 let booted = false;
+
+// parses search criteria
+function sortcrit__parse_crit (crits) {
+    let final = [];
+    for (let i in crits) {
+        let crit = crits[i].split(",");
+        let build = [crit[0]];
+        const c = crit[1];
+        let op = c===">"?0:c==="<"?1:c==="="?2:c==="!="?5:c===">="?3:c==="<="?4:c==="!=>"?6:c==="=>"?7:null;
+        build.push(op);
+        let check = crit[2];
+        if (Number(check).toString() !== "NaN") {
+            check = Number(check);
+        } else if (check[0] === '"' && check[check.length-1] === '"' && Number(check.slice(1, check.length-1)).toString() !== "NaN") {
+            check = check.slice(1, check.length-1);
+        }
+        build.push(check);
+        if (["subtasks","labels"].indexOf(crit[0]) > -1) {
+            build.push(null);
+        }
+        final.push(build);
+    }
+    return final;
+}
+
+// checks if task meets search criteria
+function sort__meets_crit (obj) {
+    crits = sortcrit__parse_crit(tsk_sch_param.criteria);
+    for (let i in crits) {
+        let check = crits[i].length<4?obj[crits[i][0]]:obj[crits[i][0]].length;
+        let comp = crits[i][2];
+        switch (crits[i][1]) {
+            // greater than
+            case 0:
+                if (check <= comp) {return false;}break;
+            // less than
+            case 1:
+                if (check >= comp) {return false;}break;
+            // equal
+            case 2:
+                if (check !== comp) {return false;}break;
+            // ge
+            case 3:
+                if (check < comp) {return false;}break;
+            // le
+            case 4:
+                if (check > comp) {return false;}break;
+            // not equal
+            case 5:
+                if (check === comp) {return false;}break;
+            // doesn't contain
+            case 6:
+                if (check.indexOf(comp) > -1) {return false;}break;
+            // contains
+            case 7:
+                if (check.indexOf(comp) < 0) {return false;}break;
+            default:
+                break;
+        }
+    }
+    return true;
+}
+
+// gets sorted task list based on search parameter
+function getSorted () {
+    let final = [];
+    for (let i in tasks) {
+        const task = tasks[i];
+        if (sort__meets_crit(task)) {
+            final.push(task);
+        }
+    }
+}
 
 // handles a click on a breadcrumb
 function breadcrumbclick (depth) {
@@ -282,6 +358,20 @@ function makeTask (data) {
     cont.onclick = () => {
         display_task(data);
     };
+}
+
+// displays task list
+function display_tasks () {
+    if (tsk_sch_param === null) {
+        for (let i in tasks) {
+            makeTask(tasks[i]);
+        }
+    } else {
+        const sorted = getSorted();
+        for (let i in sorted) {
+            makeTask(sorted[i]);
+        }
+    }
 }
 
 // does initial rendering of the tasks
