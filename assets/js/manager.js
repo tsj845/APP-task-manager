@@ -370,11 +370,31 @@ function update_subtask_removed (path) {
         search = search[task_index(search, path[i])].subtasks;
     }
     const index = task_index(search, path[path.length-1]);
-    let bread_req = false;
-    if (current_task && search[index].name === current_task.name) {
-        bread_req = true;
+    let bread_req = patheq(path);
+    if (path.length === 1) {
+        tasklist.removeChild(document.getElementById("task-"+path[0]));
     }
     search.splice(index, 1);
+    if (patheq(path.slice(0, path.length-1))) {
+        update_subtask_display();
+    }
+    if (bread_req) {
+        if (path.length === 1) {
+            current_task = null;
+            edit_project();
+            breadpath = ["top"];
+            update_bread_display();
+        } else {
+            breadpath.splice(path.length);
+            let search = tasks;
+            for (let i = 1; i < breadpath.length-1; i ++) {
+                search = search[task_index(search, breadpath[i])].subtasks;
+            }
+            current_task = search[task_index(search, breadpath[breadpath.length-1])];
+            update_bread_display();
+            display_task_b(breadpath.length-1);
+        }
+    }
 }
 
 function update_subtask_added (path, task) {
@@ -383,6 +403,12 @@ function update_subtask_added (path, task) {
         search = search[task_index(search, path[i])].subtasks;
     }
     search.push(task);
+    if (path.length == 0) {
+        makeTask(task);
+    }
+    if (patheq(path)) {
+        update_subtask_display();
+    }
 }
 
 function update_task_completion (path, value) {
@@ -453,7 +479,7 @@ function update_task_name (path, name) {
             breadpath[path.length] = name;
             update_bread_display();
         }
-    } else if (breadpath.length === path.length) {
+    } else if (breadpath.length === path.length && breadpath.length > 1) {
         if (breadpath.slice(1).join(",") === path.slice(0, path.length-1).join(",")) {
             __update_subtask_button(path[path.length-1], name, task.priority);
         }
@@ -506,14 +532,6 @@ socket.on("update", (data) => {
         case 1:
             update_task_name(data.path, data.value);
             break;
-        // task removed
-        case 2:
-            update_task_removed(data.name);
-            break;
-        // task added
-        case 3:
-            update_task_added(data.task);
-            break;
         // task priority changed
         case 4:
             update_task_priority(data.path, data.value);
@@ -545,9 +563,15 @@ socket.on("update", (data) => {
 	    // task completion changed
         case 11:
             update_task_completion(data.path, data.value);
-	        break;	
+	        break;
+        default:
+            break;
     }
 });
+
+function change_task_description (path, value) {
+    socket.emit("task-desc", {"origin":origin, "path":path, "value":value});
+}
 
 function change_label_remove (path, label) {
     socket.emit("label-remove", {"origin":origin, "path":path, "label":label});
@@ -557,7 +581,7 @@ function change_label_add (path, label) {
     socket.emit("label-add", {"origin":origin, "path":path, "label":label});
 }
 
-function change_remove_sub (path) {
+function change_remove_task (path) {
     socket.emit("remove-task", {"origin":origin, "path":path});
 }
 
@@ -565,12 +589,8 @@ function change_project_name (newname) {
     socket.emit("rename-proj", {"origin":origin, "name":newname});
 }
 
-function change_task_remove (task) {
-    socket.emit("remove-task", {"name":task, "origin":origin});
-}
-
-function change_task_add (task_name, priority) {
-    socket.emit("add-task", {"task":{"name": task_name, "priority": priority, "desc": "new task", "labels": [], "subtasks":[], "locked": false, "completed": false}, "origin":origin});
+function change_task_add (path, task_name, priority) {
+    socket.emit("add-task", {"path":path, "task":{"name": task_name, "priority": priority, "desc": "new task", "labels": [], "subtasks":[], "locked": false, "completed": false}, "origin":origin});
 }
 
 function change_task_property (path, property, value) {

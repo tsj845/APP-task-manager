@@ -99,20 +99,17 @@ def boot_client (data):
 def remove_subtask (data):
 	origin = data["origin"]
 	search = projects[origin]
-	data["id"] = 2
-	if ("path" in data.keys()):
-		data["id"] = 6
-		path = data["path"]
-		for i in range(len(path)-1):
-			step = path[i]
-			index = task_index(search, step)
-			task = search[index]
-			search = task["subtasks"]
-		name = path[-1]
-	else:
-		name = data["name"]
+	path = data["path"]
+	for i in range(len(path)-1):
+		step = path[i]
+		index = task_index(search, step)
+		task = search[index]
+		search = task["subtasks"]
+	name = path[-1]
+	print(search, name, "XYZ")
 	search.pop(task_index(search, name))
 	print(projects[origin])
+	data["id"] = 6
 	emit("update", data, to=origin)
 
 @socketio.on("add-task")
@@ -120,18 +117,16 @@ def add_subtask (data):
 	origin = data["origin"]
 	search = projects[origin]
 	task = data["task"]
-	data["id"] = 3
-	if ("path" in data.keys()):
-		data["id"] = 7
-		path = data["path"]
-		for i in range(len(path)):
-			step = path[i]
-			index = task_index(search, step)
-			search = search[index]["subtasks"]
+	path = data["path"]
+	for i in range(len(path)):
+		step = path[i]
+		index = task_index(search, step)
+		search = search[index]["subtasks"]
 	if (task_index(search, task["name"]) != -1):
 		return
 	search.append(task)
 	print(projects[origin])
+	data["id"] = 7
 	emit("update", data, to=origin)
 
 @socketio.on("rename-proj")
