@@ -498,13 +498,18 @@ socket.on("boot-res", (data) => {
     }
 });
 
-function update_task_priority (path, priority) {
+function get_task (path) {
     let task = null;
     let search = tasks;
     for (let i in path) {
         task = search[task_index(search, path[i])];
         search = task.subtasks;
     }
+    return task;
+}
+
+function update_task_priority (path, priority) {
+    let task = get_task(path);
     if (path.length === 1) {
         document.getElementById("task-"+path[0]).children[1].children[0].textContent = priority;
     }
@@ -515,12 +520,7 @@ function update_task_priority (path, priority) {
 }
 
 function update_task_description (path, desc) {
-    let task = null;
-    let search = tasks;
-    for (let i in path) {
-        task = search[task_index(search, path[i])];
-        search = task.subtasks;
-    }
+    let task = get_task(path);
     task.desc = desc;
     if (path.join(",") === breadpath.slice(1).join(",")) {
         current_task.desc = desc;
@@ -598,12 +598,7 @@ function update_subtask_added (path, task) {
 }
 
 function update_task_completion (path, value) {
-    let task = null;
-    let search = tasks;
-    for (let i in path) {
-        task = search[task_index(search, path[i])];
-        search = task.subtasks;
-    }
+    let task = get_task(path);
     task.completed = value;
     if (path.join(",") === breadpath.slice(1).join(",")) {
         current_task.completed = value;
@@ -614,12 +609,7 @@ function update_task_completion (path, value) {
     }
 }
 function update_task_locked (path, value) {
-    let search = tasks;
-    let task = null;
-    for (let i in path) {
-        task = search[task_index(search, path[i])];
-        search = search[task_index(search, path[i])].subtasks
-    }
+    let task = get_task(path);
     task.locked = value;
     if (path.length === 1) {
         document.getElementById("task-"+path[0]).children[3].children[0].textContent = value ? "locked" : "unlocked";
@@ -643,12 +633,7 @@ function __update_subtask_button (old, name, pri) {
 }
 
 function update_task_name (path, name) {
-    let search = tasks;
-    let task = null;
-    for (let i in path) {
-        task = search[task_index(search, path[i])];
-        search = task.subtasks;
-    }
+    let task = get_task(path);
     task.name = name;
     if (path.length === 1) {
         document.getElementById("task-"+path[0]).children[0].children[0].textContent = name;
@@ -673,12 +658,7 @@ function update_task_name (path, name) {
 }
 
 function update_label_removed (path, label) {
-    let task = null;
-    let search = tasks;
-    for (let i in path) {
-        task = search[task_index(search, path[i])];
-        search = task.subtasks;
-    }
+    let task = get_task(path);
     task.labels.splice(task.labels.indexOf(label), 1);
     if (patheq(path)) {
         current_task.labels.splice(current_task.labels.indexOf(label), 1);
@@ -694,12 +674,7 @@ function update_label_removed (path, label) {
 }
 
 function update_label_added (path, label) {
-    let task = null;
-    let search = tasks;
-    for (let i in path) {
-        task = search[task_index(search, path[i])]
-        search = task.subtasks;
-    }
+    let task = get_task(path);
     task.labels.push(label);
     if (patheq(path)) {
         current_task.labels.push(label);
