@@ -104,7 +104,7 @@ function parse_search () {
     if (v[v.length-1].indexOf("sort") > -1) {
         sorting = v[v.length-1];
         v.splice(v.length-1);
-    } else if (v[v.length-2].indexOf("sort") > -1) {
+    } else if (v.length > 1 && v[v.length-2].indexOf("sort") > -1) {
         sorting = v[v.length-2];
         v.splice(v.length-2, 1);
     }
@@ -122,7 +122,7 @@ function parse_search () {
         build.push(a.slice(0, ind1));
         build.push(a.slice(ind1+1, ind2));
         build.push(a.slice(ind2+1));
-        // console.log(build);
+        console.log(build);
         fin.push(build.join(","));
     }
     // console.log(fin)
@@ -155,6 +155,9 @@ function sortcrit__parse_crit (crits) {
             build.push(null);
         } else if (crit[0] == "subtasks") {
             build.push("NaN");
+        }
+        if (["locked", "completed"].indexOf(build[0]) > -1) {
+            build[2] = ["true","false"].indexOf(build[2]) > -1 ? {"true":true,"false":false}[build[2]] : build[2]
         }
         final.push(build);
     }

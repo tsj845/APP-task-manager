@@ -10,7 +10,7 @@
 				<h1 id="proj-name" onclick="edit_project()">{{ project_name }}</h1>
 				<input type="button" id="project-select" value="select project" onclick="window.location.pathname='/'">
 			</div>
-			<input type="text" id="search-bar" onkeyup="if(event.code.toString()==='Enter'){this.value=this.value==='db'?'subtasks => subtask1':this.value;parse_search();this.blur()}"><input type="button" value="help" onclick="document.body.children[0].click()">
+			<input type="text" id="search-bar" onkeyup="if(event.code.toString()==='Enter'){this.value=this.value==='db'?'locked = false':this.value;parse_search();this.blur()}" autocomplete="off" spellcheck="false" autocapitalize="off"><input type="button" value="help" onclick="document.body.children[0].click()">
 			<div id="task-list"></div>
 			<div id="new-task-controls">
 				<img src="/assets/icons/plus.svg" id="new-task-button" onclick="change_task_add(breadpath.slice(1), document.getElementById('new-task-input').value, document.getElementById('new-task-priority').value)">

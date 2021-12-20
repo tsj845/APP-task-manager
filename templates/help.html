@@ -19,5 +19,19 @@
         <p>
             show hidden:<br>when set to true shows tasks that don't meet search criteria under those that do (these tasks are sorted using the sort parameter if given)
         </p>
+        <div>
+            search parameter generator:<br>
+            <div id="base-params"></div>
+            <span>Sorting: </span><select onchange="sortby=Number(this.value);regen()">
+                <option value="-1">None</option>
+                <option value="0">Alphabetical</option>
+                <option value="1">Reverse alphabetical</option>
+                <option value="2">Priority high to low</option>
+                <option value="3">Priority low to high</option>
+            </select><br>
+            <span>Show hidden: <input type="checkbox" onchange="showhidden=!showhidden;regen()"></span><br>
+            <span>Output: <input type="text" id="output" readonly onfocus="this.select()"></span>
+        </div>
+        <script src="/assets/js/search-gen.js"></script>
     </body>
 </html>
