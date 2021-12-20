@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head></head>
+    <body>
+        <h3>Search Bar Usage</h3>
+        <p>
+            comparasons:<br>&#x3E<br>&#x3C<br>=<br>!=<br>&#x3E=<br>&#x3C=<br>!=&#x3E - does not contain<br>=&#x3E - contains
+        </p>
+        <p>
+            usage:<br>[...[task-obj-property] [comparason] [value];] (;sort=[sorting id])? (;show-hidden=[bool])? quote values that require spaces
+        </p>
+        <p>
+            examples:<br>
+            all tasks with "x" in name, sorted alphabetically: "name !=> x;sort=0"
+        </p>
+        <p>
+            sorting:<br>-1 - no sorting, tasks remain in the same order they were recieved in<br>0 - alphabetical<br>1 - reverse alphabetical<br>2 - priority high to low<br>3 - priority low to high
+        </p>
+        <p>
+            show hidden:<br>when set to true shows tasks that don't meet search criteria under those that do (these tasks are sorted using the sort parameter if given)
+        </p>
+    </body>
+</html>

@@ -53,6 +53,24 @@ let breadpath = ["top"];
 // if the page setup is done
 let booted = false;
 
+function __getspacefail (str, no) {
+    let x = false;
+    let f = 0;
+    for (let i in str) {
+        const c = str[i];
+        if (c === '"') {
+            x = !x;
+            if (!x) {
+                f ++;
+            }
+            if (f === no) {
+                return Number(i);
+            }
+        }
+    }
+    return 0;
+}
+
 function getSpace (str, no) {
     let iss = false;
     let f = 0;
@@ -68,22 +86,30 @@ function getSpace (str, no) {
             }
         }
     }
-    return 0;
+    return __getspacefail(str, no);
 }
 
 // parses search bar
 function parse_search () {
     let v = tsk_search.value;
     let sorting = null;
+    let showhiddens = false;
     v = v.split(";");
     if (v.length === 1 && v[0] === "") {
         tsk_sch_param = null;
         display_tasks();
         return;
     }
-    tsk_sch_param = {criteria:[],sorting:false,sortby:null};
+    tsk_sch_param = {criteria:[],sorting:false,sortby:null, showhidden:false};
     if (v[v.length-1].indexOf("sort") > -1) {
         sorting = v[v.length-1];
+        v.splice(v.length-1);
+    } else if (v[v.length-2].indexOf("sort") > -1) {
+        sorting = v[v.length-2];
+        v.splice(v.length-2, 1);
+    }
+    if (v[v.length-1].indexOf("show-hidden") > -1) {
+        showhiddens = v[v.length-1];
         v.splice(v.length-1);
     }
     let fin = [];
@@ -99,8 +125,10 @@ function parse_search () {
         // console.log(build);
         fin.push(build.join(","));
     }
+    // console.log(fin)
     tsk_sch_param.criteria = fin;
     tsk_sch_param.sorting = sorting !== null;
+    tsk_sch_param.showhidden = showhiddens === "show-hidden=true";
     if (tsk_sch_param.sorting) {
         tsk_sch_param.sortby = Number(sorting.slice(sorting.indexOf("=")+1));
     }
@@ -123,8 +151,10 @@ function sortcrit__parse_crit (crits) {
             check = check.slice(1, check.length-1);
         }
         build.push(check);
-        if (["subtasks","labels"].indexOf(crit[0]) > -1) {
+        if (["subtasks","labels"].indexOf(crit[0]) > -1 && (op !== 6 && op !== 7)) {
             build.push(null);
+        } else if (crit[0] == "subtasks") {
+            build.push("NaN");
         }
         final.push(build);
     }
@@ -135,8 +165,9 @@ function sortcrit__parse_crit (crits) {
 function sort__meets_crit (obj) {
     crits = sortcrit__parse_crit(tsk_sch_param.criteria);
     for (let i in crits) {
-        let check = crits[i].length<4?obj[crits[i][0]]:obj[crits[i][0]].length;
+        let check = crits[i][3] === null?obj[crits[i][0]].length:obj[crits[i][0]];
         let comp = crits[i][2];
+        // console.log(crits)
         switch (crits[i][1]) {
             // greater than
             case 0:
@@ -158,10 +189,13 @@ function sort__meets_crit (obj) {
                 if (check === comp) {return false;}break;
             // doesn't contain
             case 6:
-                if (check.indexOf(comp) > -1) {return false;}break;
+                if (crits[i][3] === "NaN" && task_index(check, comp) > -1) {return false;}
+                else if (check.indexOf(comp) > -1) {return false;}break;
             // contains
             case 7:
-                if (check.indexOf(comp) < 0) {return false;}break;
+                // console.log(task_index(check, comp), comp, check, crits[i][3], crits[i]);
+                if (crits[i][3] === "NaN"){if (task_index(check, comp) < 0) {return false;}}
+                else if (check.indexOf(comp) < 0) {return false;}break;
             default:
                 break;
         }
@@ -170,7 +204,7 @@ function sort__meets_crit (obj) {
 }
 
 function alphasort (n1, n2) {
-    const alph = "abcdefghijklmnopqrstuvwxyz";
+    const alph = "abcdefghijklmnopqrstuvwxyz0123456789";
     for (let i = 0; i < Math.min(n1.length, n2.length); i ++) {
         if (n1[i] === n2[i]) {
             continue;
@@ -220,14 +254,20 @@ function sort__sortfinal (final) {
 // gets sorted task list based on search parameter
 function getSorted () {
     let final = [];
+    let rejects = [];
     for (let i in tasks) {
         const task = tasks[i];
         if (sort__meets_crit(task)) {
             final.push(task);
+        } else {
+            rejects.push(task);
         }
     }
     if (tsk_sch_param.sorting) {
-        return sort__sortfinal(final);
+        final = sort__sortfinal(final);
+    }
+    if (tsk_sch_param.showhidden) {
+        final = final.concat(sort__sortfinal(rejects));
     }
     return final;
 }
@@ -592,7 +632,7 @@ function update_subtask_added (path, task) {
     if (path.length == 0) {
         makeTask(task);
     }
-    if (patheq(path)) {
+    if (patheq(path) && path.length > 0) {
         update_subtask_display();
     }
 }
@@ -684,6 +724,7 @@ function update_label_added (path, label) {
 
 socket.on("update", (data) => {
     const upid = data.id;
+    console.log(upid, "DATA UPDATE ID");
     switch (upid) {
         // project name change
         case 0:

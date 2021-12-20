@@ -45,6 +45,10 @@ def projectsf ():
 server.add_url_rule("/", endpoint="index")
 server.add_url_rule("/projects", endpoint="index")
 
+@server.route("/help")
+def help_page ():
+	return render("help.html")
+
 @server.route("/projects/<project>")
 def projectf (project):
 	if (project not in projects.keys()):
