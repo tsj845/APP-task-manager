@@ -122,7 +122,7 @@ function parse_search () {
         build.push(a.slice(0, ind1));
         build.push(a.slice(ind1+1, ind2));
         build.push(a.slice(ind2+1));
-        console.log(build);
+        // console.log(build);
         fin.push(build.join(","));
     }
     // console.log(fin)
@@ -727,7 +727,7 @@ function update_label_added (path, label) {
 
 socket.on("update", (data) => {
     const upid = data.id;
-    console.log(upid, "DATA UPDATE ID");
+    // console.log(upid, "DATA UPDATE ID");
     switch (upid) {
         // project name change
         case 0:
