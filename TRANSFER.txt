@@ -1,3 +1,5 @@
 I have made the decision that in order to keep my account cleaner and to make it easier to set up new projects that we will be using a GitHub organization from now on
 
 I have sent you all invites to this and our newest project repo is in the organization, please push new changes to the organization's repo
+
+the organization is called "PHS-APP"
