@@ -600,10 +600,29 @@ function update_task_property (data) {
 		seltsk_completed.checked = value;
 		break;
 	    case "locked":
-		console.log("NOOOOOO");
 		current_task.locked = value;
 		seltsk_locked.src = value ? "/assets/icons/locked.svg" : "/assets/icons/unlocked.svg";
 		value ? set_disable_all(true) : set_disable_all(false);
+	    case "labels":
+		current_task.labels = value;
+		let child = null;
+		for (let i in seltsk_labels.children) {
+		    child = seltsk_labels.children[i];
+		    if (child.id != null) {
+			if (!value.includes(child.id.replace("tasklabeldisplay-", ""))) {
+			    break;
+			}
+		    } else {
+			child = null;
+		    }
+		}
+		if (child == null) {
+		    makeLabel(value.slice(-1));
+		}
+		else {
+		    seltsk_labels.removeChild(child);
+		}
+		break;
 	    default:
 		break;		
 	}
@@ -703,32 +722,6 @@ function __update_subtask_button (old, name, pri) {
     }
 }
 
-function update_label_removed (path, label) {
-    let task = get_task(path);
-    task.labels.splice(task.labels.indexOf(label), 1);
-    if (patheq(path)) {
-        current_task.labels.splice(current_task.labels.indexOf(label), 1);
-        let child = null;
-        for (let i in seltsk_labels.children) {
-            child = seltsk_labels.children[i];
-            if (child.id === "tasklabeldisplay-"+label) {
-                break;
-            }
-        }
-        seltsk_labels.removeChild(child);
-    }
-}
-
-function update_label_added (path, label) {
-    let task = get_task(path);
-    task.labels.push(label);
-    if (patheq(path)) {
-        current_task.labels.push(label);
-        makeLabel(label);
-    }
-}
-
-
 socket.on("update", (data) => {
     const upid = data.id;
     // console.log(upid, "DATA UPDATE ID");
@@ -763,11 +756,17 @@ socket.on("update", (data) => {
 });
 
 function change_label_remove (path, label) {
-    socket.emit("label-remove", {"origin":origin, "path":path, "label":label});
+    let task = get_task(path);
+    let labels = task["labels"];
+    labels.splice(task.labels.indexOf(label), 1);
+    change_task_property(path, "labels", labels)
 }
 
 function change_label_add (path, label) {
-    socket.emit("label-add", {"origin":origin, "path":path, "label":label});
+    let task = get_task(path);
+    let labels = task["labels"];
+    labels.push(label);
+    change_task_property(path, "labels", labels)
 }
 
 function change_remove_task (path) {

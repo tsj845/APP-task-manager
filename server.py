@@ -148,34 +148,6 @@ def change_task_property (data):
 	data["id"] = 1
 	emit("update", data, to=origin)
 
-@socketio.on("label-remove")
-def label_remove (data):
-	origin = data["origin"]
-	path = data["path"]
-	label = data["label"]
-	proj = projects[origin]
-	task = None
-	for step in path:
-		task = proj[task_index(proj, step)]
-		proj = task["subtasks"]
-	task["labels"].pop(task["labels"].index(label))
-	data["id"] = 8
-	socketio.emit("update", data, to=origin)
-
-@socketio.on("label-add")
-def label_add (data):
-	origin = data["origin"]
-	path = data["path"]
-	label = data["label"]
-	proj = projects[origin]
-	task = None
-	for step in path:
-		task = proj[task_index(proj, step)]
-		proj = task["subtasks"]
-	task["labels"].append(label)
-	data["id"] = 9
-	socketio.emit("update", data, to=origin)
-
 @socketio.on("leav-proj")
 def leave_project ():
 	print("leaving")
