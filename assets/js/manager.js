@@ -170,6 +170,11 @@ function sort__meets_crit (obj) {
     for (let i in crits) {
         let check = crits[i][3] === null?obj[crits[i][0]].length:obj[crits[i][0]];
         let comp = crits[i][2];
+        if ([2,6].indexOf(crits[i][1]) >= 0 && comp === "*") {
+            return false;
+        } else if (comp === "*") {
+            continue;
+        }
         // console.log(crits)
         switch (crits[i][1]) {
             // greater than
