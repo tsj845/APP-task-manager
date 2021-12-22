@@ -129,79 +129,19 @@ def rename_proj (data):
 	emit("update", data, to=origin)
 	emit("name-change", {"old":origin,"name":name}, to="project-view")
 
-@socketio.on("task-name")
-def rename_task (data):
+@socketio.on("change-task-property")
+def change_task_property (data):
 	print(data)
-	print(f"task rename by {flask_socketio.flask.request.sid}")
 	origin = data["origin"]
-	newname = data["value"]
 	path = data["path"]
 	proj = projects[origin]
+	value = data[list(data)[-1]]
 	task = None
 	for step in path:
 		task = proj[task_index(proj, step)]
 		proj = task["subtasks"]
-	task["name"] = newname
+	task[list(data)[-1]] = value;
 	data["id"] = 1
-	emit("update", data, to=origin)
-
-@socketio.on("task-pri")
-def task_pri (data):
-	print(f"task priority change by {flask_socketio.flask.request.sid}")
-	origin = data["origin"]
-	priority = data["value"]
-	proj = projects[origin]
-	task = None
-	path = data["path"]
-	for step in path:
-		task = proj[task_index(proj, step)]
-		proj = task["subtasks"]
-	task["priority"] = priority
-	data["id"] = 4
-	emit("update", data, to=origin)
-
-@socketio.on("task-lock")
-def task_lock (data):
-	origin = data["origin"]
-	value = data["value"]
-	path = data["path"]
-	task = None
-	proj = projects[origin]
-	for step in path:
-		task = proj[task_index(proj, step)]
-		proj = task["subtasks"]
-	task["locked"] = value
-	data["id"] = 10
-	emit("update", data, to=origin)
-
-@socketio.on("task-desc")
-def task_desc (data):
-	print(f"task description change by {flask_socketio.flask.request.sid}")
-	origin = data["origin"]
-	path = data["path"]
-	desc = data["value"]
-	proj = projects[origin]
-	task = None
-	for step in path:
-		task = proj[task_index(proj, step)]
-		proj = task["subtasks"]
-	task["desc"] = desc
-	data["id"] = 5
-	emit("update", data, to=origin)
-
-@socketio.on("task-comp")
-def task_comp (data):
-	print(f"task completion change by {flask_socketio.flask.request.sid}")
-	origin = data["origin"]
-	path = data["path"]
-	value = data["value"]
-	proj = projects[origin]
-	task = None
-	for i in range(len(path)):
-		task = proj[task_index(proj, path[i])]
-		proj = task["subtasks"]
-	task["completed"] = value
-	data["id"] = 11
 	emit("update", data, to=origin)
 
 @socketio.on("label-remove")

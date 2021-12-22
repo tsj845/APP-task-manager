@@ -299,7 +299,7 @@ function task_index (list, task) {
 
 // toggles a task's locked status
 function toggle_task_locked () {
-    change_task_property(breadpath.slice(1), "lock", !current_task.locked);
+    change_task_property(breadpath.slice(1), "locked", !current_task.locked);
 }
 
 // updates the subtask display
@@ -508,24 +508,71 @@ function get_task (path) {
     return task;
 }
 
-function update_task_priority (path, priority) {
+function update_task_property (data) {
+    let path = data.path;
     let task = get_task(path);
+    let changed = Object.keys(data)[2];
+    let value = data[changed];
     if (path.length === 1) {
-        document.getElementById("task-"+path[0]).children[1].children[0].textContent = priority;
+	switch (changed) {
+       	    case "name":
+	        document.getElementById("task-"+path[0]).children[0].children[0].textContent = value;
+                document.getElementById("task-"+path[0]).id = "task-"+value;
+		break;
+       	    case "priority":
+	        document.getElementById("task-"+path[0]).children[1].children[0].textContent = value;
+		break;
+            case "completed":
+	        document.getElementById("task-"+path[0]).children[2].children[0].textContent = value ? "complete" : "incomplete";
+		break;
+       	    case "locked":
+	        document.getElementById("task-"+path[0]).children[3].children[0].textContent = value ? "locked" : "unlocked";
+		break;
+	    default:
+		break;
+	}
     }
-    task.priority = priority;
     if (patheq(path)) {
-        seltsk_priority.selectedIndex = {"low":0,"medium":1,"med":1,"high":2}[priority];
+	switch (changed) {
+	    case "name":
+		current_task.name = name;
+		seltsk_name.value = name;
+		breadpath[breadpath.length-1] = name;
+		update_bread_display();
+		break;
+	    case "desc":
+		current_task.desc = value;
+		seltsk_desc.value = value;
+		break;
+	    case "priority":
+		seltsk_priority.selectedIndex = {"low":0,"medium":1,"med":1,"high":2}[value];
+		break;
+	    case "completed":
+		current_task.completed = value;
+		seltsk_completed.checked = value;
+		break;
+	    case "locked":
+		console.log("NOOOOOO");
+		current_task.locked = value;
+		seltsk_locked.src = value ? "/assets/icons/locked.svg" : "/assets/icons/unlocked.svg";
+		value ? set_disable_all(true) : set_disable_all(false);
+	    default:
+		break;		
+	}
     }
-}
-
-function update_task_description (path, desc) {
-    let task = get_task(path);
-    task.desc = desc;
-    if (path.join(",") === breadpath.slice(1).join(",")) {
-        current_task.desc = desc;
-        seltsk_desc.value = desc;
+    if (changed == "name") {
+	if (breadpath.length-1 > path.length) {
+            if (breadpath.slice(1, path.length+1).join(",") === path.join(",")) {
+		breadpath[path.length] = value;
+		update_bread_display();
+            }
+	} else if (breadpath.length === path.length && breadpath.length > 1) {
+            if (breadpath.slice(1).join(",") === path.slice(0, path.length-1).join(",")) {
+		__update_subtask_button(path[path.length-1], value, task.priority);
+            }
+	}
     }
+    task[changed] = value;
 }
 
 function update_task_removed (name) {
@@ -597,30 +644,6 @@ function update_subtask_added (path, task) {
     }
 }
 
-function update_task_completion (path, value) {
-    let task = get_task(path);
-    task.completed = value;
-    if (path.join(",") === breadpath.slice(1).join(",")) {
-        current_task.completed = value;
-        seltsk_completed.checked = value;
-    }
-    if (path.length === 1) {
-        document.getElementById("task-"+path[0]).children[2].children[0].textContent = value ? "complete" : "incomplete";
-    }
-}
-function update_task_locked (path, value) {
-    let task = get_task(path);
-    task.locked = value;
-    if (path.length === 1) {
-        document.getElementById("task-"+path[0]).children[3].children[0].textContent = value ? "locked" : "unlocked";
-    }
-    if (patheq(path)) {
-        current_task.locked = value;
-        seltsk_locked.src = value ? "/assets/icons/locked.svg" : "/assets/icons/unlocked.svg";
-        value ? set_disable_all(true) : set_disable_all(false);
-    }
-}
-
 function __update_subtask_button (old, name, pri) {
     for (let i in seltsk_subtasks.children) {
         const elem = seltsk_subtasks.children[i];
@@ -628,31 +651,6 @@ function __update_subtask_button (old, name, pri) {
             elem.value = name+" "+pri;
             elem.id = "subtaskdisplay-"+name;
             break;
-        }
-    }
-}
-
-function update_task_name (path, name) {
-    let task = get_task(path);
-    task.name = name;
-    if (path.length === 1) {
-        document.getElementById("task-"+path[0]).children[0].children[0].textContent = name;
-        document.getElementById("task-"+path[0]).id = "task-"+name;
-    }
-    if (patheq(path)) {
-        current_task.name = name;
-        seltsk_name.value = name;
-        breadpath[breadpath.length-1] = name;
-        update_bread_display();
-    }
-    if (breadpath.length-1 > path.length) {
-        if (breadpath.slice(1, path.length+1).join(",") === path.join(",")) {
-            breadpath[path.length] = name;
-            update_bread_display();
-        }
-    } else if (breadpath.length === path.length && breadpath.length > 1) {
-        if (breadpath.slice(1).join(",") === path.slice(0, path.length-1).join(",")) {
-            __update_subtask_button(path[path.length-1], name, task.priority);
         }
     }
 }
@@ -682,6 +680,7 @@ function update_label_added (path, label) {
     }
 }
 
+
 socket.on("update", (data) => {
     const upid = data.id;
     switch (upid) {
@@ -689,17 +688,9 @@ socket.on("update", (data) => {
         case 0:
             window.location.pathname = "/projects/"+data.name;
             break;
-        // task name changed
+        // task property changed
         case 1:
-            update_task_name(data.path, data.value);
-            break;
-        // task priority changed
-        case 4:
-            update_task_priority(data.path, data.value);
-            break;
-        // task description changed
-        case 5:
-            update_task_description(data.path, data.value);
+            update_task_property(data);
             break;
         // subtask deleted
         case 6:
@@ -717,22 +708,10 @@ socket.on("update", (data) => {
         case 9:
             update_label_added(data.path, data.label);
             break;
-        // any task locked status
-        case 10:
-            update_task_locked(data.path, data.value);
-            break;
-	    // task completion changed
-        case 11:
-            update_task_completion(data.path, data.value);
-	        break;
         default:
             break;
     }
 });
-
-function change_task_description (path, value) {
-    socket.emit("task-desc", {"origin":origin, "path":path, "value":value});
-}
 
 function change_label_remove (path, label) {
     socket.emit("label-remove", {"origin":origin, "path":path, "label":label});
@@ -755,7 +734,11 @@ function change_task_add (path, task_name, priority) {
 }
 
 function change_task_property (path, property, value) {
-    socket.emit("task-"+property, {"path":path, "origin":origin, "value":value})
+    data = {}
+    data["path"] = path
+    data["origin"] = origin
+    data[property] = value
+    socket.emit("change-task-property", data)
 }
 
 function show_new_label_options () {
